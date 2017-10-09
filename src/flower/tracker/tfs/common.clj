@@ -1,0 +1,80 @@
+(ns flower.tracker.tfs.common
+  (:require [clj-http.client :as client]
+            [clojure.data.json :as json]
+            [flower.macros :as macros]
+            [flower.tracker.proto :as proto]))
+
+
+;;
+;; Public definitions
+;;
+
+(macros/public-definition get-tfs-workitems-inner cached)
+(macros/public-definition get-tfs-query-inner cached)
+(macros/public-definition get-tfs-iterations-inner cached)
+(macros/public-definition get-tfs-capacity-inner cached)
+
+
+;;
+;; Macros
+;;
+
+(defmacro with-tfs-auth [full-url query-params key & body]
+  `(let [response# (client/get ~full-url {:basic-auth [~'login ~'password]
+                                          :content-type :json
+                                          :accept :json
+                                          :query-params ~query-params})
+         response-body# (get response# :body "{}")
+         ~'result (get (json/read-str response-body#
+                                      :key-fn keyword)
+                       ~key [])]
+     ~@body))
+
+
+(defmacro with-tfs-function [tracker project? url query-params key & body]
+  (let [full-url (if project?
+                   `(str (proto/get-project-url ~tracker) ~@url)
+                   `(str (proto/get-tracker-url ~tracker) ~@url))]
+    `(let [auth# (get-in (proto/get-tracker-component ~tracker)
+                         [:auth]
+                         {})
+           ~'login (get auth# :tfs-login)
+           ~'password (get auth# :tfs-password)]
+       (with-tfs-auth ~full-url ~query-params ~key
+         ~@body))))
+
+
+;;
+;; Private definitions
+;;
+
+(defn- private-get-tfs-workitems-inner [tracker task-ids]
+  (let [query-string {:ids (clojure.string/join "," task-ids)}]
+    (with-tfs-function tracker false ("/_apis/wit/workitems") query-string :value
+      result)))
+
+
+(defn- private-get-tfs-query-inner [tracker query-id]
+  (with-tfs-function tracker false ("/_apis/wit/wiql/" query-id) {} :workItems
+    (private-get-tfs-workitems-inner tracker
+                                     (map :id result))))
+
+
+(defn- private-get-tfs-iterations-inner [tracker]
+  (with-tfs-function tracker true ("/_apis/work/teamsettings") {} :_links
+    (with-tfs-auth (get-in result [:teamIterations :href]) {} :value
+      result)))
+
+
+(defn- private-get-tfs-capacity-inner [tracker iteration]
+  (with-tfs-function tracker true ("/_apis/work/teamsettings") {} :_links
+    (with-tfs-auth (get-in result [:teamIterations :href]) {} :value
+      (if-let [iteration-url (-> (filter (fn [iteration-inner]
+                                           (= 0 (compare (proto/get-id iteration)
+                                                         (get iteration-inner :id))))
+                                         result)
+                                 (first)
+                                 (get :url))]
+        (with-tfs-auth iteration-url {} :_links
+          (with-tfs-auth (get-in result [:capacity :href]) {} :value
+            result))))))
