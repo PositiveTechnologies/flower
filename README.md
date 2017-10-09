@@ -1,5 +1,8 @@
 # Flower
 
+[![Clojars](https://img.shields.io/clojars/v/com.ptsecurity/flower.svg)](https://clojars.org/com.ptsecurity/flower)
+[![Travis](https://img.shields.io/travis/PositiveTechnologies/flower.svg)](https://travis-ci.org/PositiveTechnologies/flower)
+
 Handles all your issue tracking tools and version control systems for you!
 
 The Flower library is a set of common protocols for repositories, task trackers, and messaging
