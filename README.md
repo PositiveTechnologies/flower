@@ -15,7 +15,8 @@ Initially, it was designed to handle all routine operations of the
 * Merge opened interlinked pull requests in different GitLab repositories or servers, once MRs
 are marked with 'LGTM', and then close issues in TFS.
 * Notify about team members' birthdays.
-* Create email requests to the company’s IT Helpdesk in order to give access rights to new team members.
+* Create email requests to the company’s IT Helpdesk in order to give access rights
+to new team members.
 * Search for current 'In Progress' issues from the CLI.
 * And much more.
 
@@ -168,6 +169,14 @@ repository:
      (repository.proto/get-pull-requests (first (:pt-github pt-repos))))
 ```
 
+Let's merge some opened pull request (make sure you specified `:auth` beforehand,
+see previous section):
+
+```clj
+(let [first-opened-pr (first (repository.proto/get-pull-requests (first (:pt-github pt-repos))
+                                                                 {:pr-state "opened"}))]
+  (repository.proto/merge-pull-request first-opened-pr))
+```
 
 ### Messaging
 
@@ -214,6 +223,7 @@ specific email with this:
 ## License
 
 Copyright © 2017 JSC Positive Technologies. All rights reserved.
+
 Distributed under the MIT License. See LICENSE.
 
 All the libraries and systems are licensed and remain the property of their respective owners.

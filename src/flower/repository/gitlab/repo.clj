@@ -1,7 +1,7 @@
 (ns flower.repository.gitlab.repo
   (:require [flower.repository.proto :as proto]
             [flower.repository.gitlab.common :as common]
-            [flower.repository.gitlab.mr :as mr]))
+            [flower.repository.gitlab.pr :as pr]))
 
 
 ;;
@@ -50,4 +50,4 @@
 (defn- private-get-pull-requests [repository repo-project options]
   (if (nil? repo-project)
     (list)
-    (mr/get-gitlab-pull-requests repository options)))
+    (pr/get-gitlab-pull-requests repository options)))

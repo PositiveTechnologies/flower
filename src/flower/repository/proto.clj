@@ -22,7 +22,10 @@
   (get-source-branch [pull-request])
   (get-target-branch [pull-request])
   (get-title [pull-request])
-  (get-counters [pull-request]))
+  (get-counters [pull-request])
+  (merge-pull-request
+    [pull-request]
+    [pull-request message]))
 
 
 (defprotocol RepositoryPullRequestCounterProto

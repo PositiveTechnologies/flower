@@ -1,4 +1,4 @@
-(ns flower.repository.gitlab.mr
+(ns flower.repository.gitlab.pr
   (:require [flower.macros :as macros]
             [flower.repository.proto :as proto]
             [flower.repository.gitlab.common :as common]))
@@ -9,7 +9,8 @@
 ;;
 
 (declare private-get-gitlab-pull-requests-inner
-         private-get-gitlab-pull-request-counters)
+         private-get-gitlab-pull-request-counters
+         private-merge-pull-request)
 
 
 ;;
@@ -28,22 +29,30 @@
 
 
 (defrecord GitlabRepositoryPullRequest [repository
-                                        mr-id
-                                        mr-title
-                                        mr-state
-                                        mr-target-branch
-                                        mr-source-branch
-                                        mr-author
-                                        mr-assignee
-                                        mr-counters
+                                        pr-id
+                                        pr-title
+                                        pr-state
+                                        pr-target-branch
+                                        pr-source-branch
+                                        pr-author
+                                        pr-assignee
+                                        pr-counters
                                         task-ids]
   proto/RepositoryPullRequestProto
   (get-repository [pull-request] repository)
-  (get-state [pull-request] mr-state)
-  (get-source-branch [pull-request] mr-source-branch)
-  (get-target-branch [pull-request] mr-target-branch)
-  (get-title [pull-request] mr-title)
-  (get-counters [pull-request] mr-counters))
+  (get-state [pull-request] pr-state)
+  (get-source-branch [pull-request] pr-source-branch)
+  (get-target-branch [pull-request] pr-target-branch)
+  (get-title [pull-request] pr-title)
+  (get-counters [pull-request] pr-counters)
+  (merge-pull-request [pull-request] (private-merge-pull-request repository
+                                                                 pull-request
+                                                                 pr-id
+                                                                 nil))
+  (merge-pull-request [pull-request message] (private-merge-pull-request repository
+                                                                         pull-request
+                                                                         pr-id
+                                                                         message)))
 
 
 (macros/public-definition get-gitlab-pull-requests cached)
@@ -56,17 +65,17 @@
 (defn- private-get-gitlab-pull-requests-before-map [repository options]
   (map #(map->GitlabRepositoryPullRequest
          {:repository repository
-          :mr-id (.getIid %)
-          :mr-title (.getTitle %)
-          :mr-state (.getState %)
-          :mr-target-branch (.getTargetBranch %)
-          :mr-source-branch (.getSourceBranch %)
-          :mr-author (.getUsername (.getAuthor %))
-          :mr-assignee (let [assignee (.getAssignee %)]
+          :pr-id (.getIid %)
+          :pr-title (.getTitle %)
+          :pr-state (.getState %)
+          :pr-target-branch (.getTargetBranch %)
+          :pr-source-branch (.getSourceBranch %)
+          :pr-author (.getUsername (.getAuthor %))
+          :pr-assignee (let [assignee (.getAssignee %)]
                          (if assignee
                            (.getUsername assignee)
                            nil))
-          :mr-counters (private-get-gitlab-pull-request-counters repository %)
+          :pr-counters (private-get-gitlab-pull-request-counters repository %)
           :task-ids (list)})
        (private-get-gitlab-pull-requests-inner repository options)))
 
@@ -111,8 +120,18 @@
 (defn- private-get-gitlab-pull-requests-inner [repository options]
   (let [conn-inner (common/get-gitlab-conn-inner repository)
         project-inner (common/get-gitlab-project-inner repository)]
-    (case (get options :mr-state)
+    (case (get options :pr-state)
       "opened" (.getOpenMergeRequests conn-inner project-inner)
       "merged" (.getMergedMergeRequests conn-inner project-inner)
       "closed" (.getClosedMergeRequests conn-inner project-inner)
       nil (.getMergeRequests conn-inner project-inner))))
+
+
+(defn- private-merge-pull-request [repository pull-request pr-id message]
+  (let [conn-inner (common/get-gitlab-conn-inner repository)
+        project-inner (common/get-gitlab-project-inner repository)
+        opened-pull-requests (.getOpenMergeRequests conn-inner project-inner)
+        inner-pull-request (first (filter #(= (.getIid %) pr-id) opened-pull-requests))]
+    (if inner-pull-request
+      (.acceptMergeRequest conn-inner project-inner (.getId inner-pull-request) message))
+    (assoc pull-request :pr-state "merged")))

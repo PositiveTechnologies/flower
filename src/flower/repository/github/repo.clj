@@ -1,7 +1,7 @@
 (ns flower.repository.github.repo
   (:require [flower.repository.proto :as proto]
             [flower.repository.github.common :as common]
-            [flower.repository.github.mr :as mr]))
+            [flower.repository.github.pr :as pr]))
 
 
 ;;
@@ -50,4 +50,4 @@
 (defn- private-get-pull-requests [repository repo-project options]
   (if (nil? repo-project)
     (list)
-    (mr/get-github-pull-requests repository options)))
+    (pr/get-github-pull-requests repository options)))

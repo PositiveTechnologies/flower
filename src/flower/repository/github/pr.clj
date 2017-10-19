@@ -1,4 +1,4 @@
-(ns flower.repository.github.mr
+(ns flower.repository.github.pr
   (:require [flower.macros :as macros]
             [flower.repository.proto :as proto]
             [flower.repository.github.common :as common]))
@@ -9,7 +9,8 @@
 ;;
 
 (declare private-get-github-pull-requests-inner
-         private-get-github-pull-request-counters)
+         private-get-github-pull-request-counters
+         private-merge-pull-request)
 
 
 ;;
@@ -28,22 +29,30 @@
 
 
 (defrecord GithubRepositoryPullRequest [repository
-                                        mr-id
-                                        mr-title
-                                        mr-state
-                                        mr-target-branch
-                                        mr-source-branch
-                                        mr-author
-                                        mr-assignee
-                                        mr-counters
+                                        pr-id
+                                        pr-title
+                                        pr-state
+                                        pr-target-branch
+                                        pr-source-branch
+                                        pr-author
+                                        pr-assignee
+                                        pr-counters
                                         task-ids]
   proto/RepositoryPullRequestProto
   (get-repository [pull-request] repository)
-  (get-state [pull-request] mr-state)
-  (get-source-branch [pull-request] mr-source-branch)
-  (get-target-branch [pull-request] mr-target-branch)
-  (get-title [pull-request] mr-title)
-  (get-counters [pull-request] mr-counters))
+  (get-state [pull-request] pr-state)
+  (get-source-branch [pull-request] pr-source-branch)
+  (get-target-branch [pull-request] pr-target-branch)
+  (get-title [pull-request] pr-title)
+  (get-counters [pull-request] pr-counters)
+  (merge-pull-request [pull-request] (private-merge-pull-request repository
+                                                                 pull-request
+                                                                 pr-id
+                                                                 nil))
+  (merge-pull-request [pull-request message] (private-merge-pull-request repository
+                                                                         pull-request
+                                                                         pr-id
+                                                                         message)))
 
 
 (macros/public-definition get-github-pull-requests cached)
@@ -56,20 +65,20 @@
 (defn- private-get-github-pull-requests-before-map [repository options]
   (map #(map->GithubRepositoryPullRequest
          {:repository repository
-          :mr-id (.getNumber %)
-          :mr-title (.getTitle %)
-          :mr-state (let [state (.getState %)]
+          :pr-id (.getNumber %)
+          :pr-title (.getTitle %)
+          :pr-state (let [state (.getState %)]
                       (if (= state "open")
                         "opened"
                         state))
-          :mr-target-branch (.getRef (.getBase %))
-          :mr-source-branch (.getRef (.getHead %))
-          :mr-author (.getName (.getUser %))
-          :mr-assignee (let [assignee (.getAssignee %)]
+          :pr-target-branch (.getRef (.getBase %))
+          :pr-source-branch (.getRef (.getHead %))
+          :pr-author (.getName (.getUser %))
+          :pr-assignee (let [assignee (.getAssignee %)]
                          (if assignee
                            (.getName assignee)
                            nil))
-          :mr-counters (private-get-github-pull-request-counters repository %)
+          :pr-counters (private-get-github-pull-request-counters repository %)
           :task-ids (list)})
        (private-get-github-pull-requests-inner repository options)))
 
@@ -110,8 +119,13 @@
 
 (defn- private-get-github-pull-requests-inner [repository options]
   (common/get-github-pull-requests-inner repository
-                                         (case (get options :mr-state)
+                                         (case (get options :pr-state)
                                            "opened" "open"
                                            "merged" "closed"
                                            "closed" "closed"
                                            nil "all")))
+
+
+(defn- private-merge-pull-request [repository pull-request pr-id message]
+  (common/merge-github-pull-request-inner repository pull-request pr-id message)
+  (assoc pull-request :pr-state "merged"))

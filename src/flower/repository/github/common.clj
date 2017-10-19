@@ -16,6 +16,7 @@
 (macros/public-definition get-github-projects-inner cached)
 (macros/public-definition get-github-pull-requests-inner cached)
 (macros/public-definition get-github-pull-request-comments-inner cached)
+(macros/public-definition merge-github-pull-request-inner)
 
 
 ;;
@@ -71,3 +72,16 @@
         pull-request-service (PullRequestService. conn-inner)
         pull-request-id (.getNumber pull-request)]
     (.getComments pull-request-service project-inner pull-request-id)))
+
+
+(defn- private-merge-github-pull-request-inner [repository pull-request pr-id message]
+  (let [conn-inner (get-github-conn-inner repository)
+        project-inner (get-github-project-inner repository)
+        pull-request-service (PullRequestService. conn-inner)
+        commit-message (or message
+                           (str "Merge branch '"
+                                (proto/get-source-branch pull-request)
+                                "' into '"
+                                (proto/get-target-branch pull-request)
+                                "'"))]
+    (.merge pull-request-service project-inner pr-id commit-message)))
