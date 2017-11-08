@@ -175,7 +175,7 @@ see previous section):
 ```clj
 (let [first-opened-pr (first (repository.proto/get-pull-requests (first (:pt-github pt-repos))
                                                                  {:pr-state "opened"}))]
-  (repository.proto/merge-pull-request first-opened-pr))
+  (repository.proto/merge-pull-request! first-opened-pr))
 ```
 
 ### Messaging
@@ -215,9 +215,9 @@ The structure of the message is very simple. You can even change its recipients 
 specific email with this:
 
 ```clj
-(messaging.proto/send-message (assoc top-message
-                                     :msg-recipients
-                                     '("new_recipient@example.com")))
+(messaging.proto/send-message! (assoc top-message
+                                      :msg-recipients
+                                      '("new_recipient@example.com")))
 ```
 
 ## License

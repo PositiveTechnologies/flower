@@ -22,7 +22,7 @@
   (get-recipients [message] msg-recipients)
   (get-title [message] msg-title)
   (get-body [message] msg-body)
-  (send-message [message] (common/send-exchange-message-inner message)))
+  (send-message! [message] (common/send-exchange-message-inner! message)))
 
 
 (macros/public-definition search-exchange-messages cached)

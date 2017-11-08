@@ -20,7 +20,7 @@
 
 (macros/public-definition get-message-box-conn-inner cached)
 (macros/public-definition search-exchange-messages-inner cached)
-(macros/public-definition send-exchange-message-inner)
+(macros/public-definition send-exchange-message-inner!)
 
 
 ;;
@@ -42,7 +42,7 @@
                                                     (.autodiscoverUrl email)))))
 
 
-(defn- private-send-exchange-message-inner [message]
+(defn- private-send-exchange-message-inner! [message]
   (let [message-box (proto/get-message-box message)
         conn-inner (get-message-box-conn-inner message-box)
         message-inner (doto (EmailMessage. conn-inner)

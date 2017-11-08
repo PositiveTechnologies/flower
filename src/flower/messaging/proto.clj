@@ -16,4 +16,4 @@
   (get-recipients [message])
   (get-title [message])
   (get-body [message])
-  (send-message [message]))
+  (send-message! [message]))

@@ -10,7 +10,7 @@
 
 (declare private-get-github-pull-requests-inner
          private-get-github-pull-request-counters
-         private-merge-pull-request)
+         private-merge-pull-request!)
 
 
 ;;
@@ -45,14 +45,14 @@
   (get-target-branch [pull-request] pr-target-branch)
   (get-title [pull-request] pr-title)
   (get-counters [pull-request] pr-counters)
-  (merge-pull-request [pull-request] (private-merge-pull-request repository
-                                                                 pull-request
-                                                                 pr-id
-                                                                 nil))
-  (merge-pull-request [pull-request message] (private-merge-pull-request repository
-                                                                         pull-request
-                                                                         pr-id
-                                                                         message)))
+  (merge-pull-request! [pull-request] (private-merge-pull-request! repository
+                                                                   pull-request
+                                                                   pr-id
+                                                                   nil))
+  (merge-pull-request! [pull-request message] (private-merge-pull-request! repository
+                                                                           pull-request
+                                                                           pr-id
+                                                                           message)))
 
 
 (macros/public-definition get-github-pull-requests cached)
@@ -126,6 +126,6 @@
                                            nil "all")))
 
 
-(defn- private-merge-pull-request [repository pull-request pr-id message]
-  (common/merge-github-pull-request-inner repository pull-request pr-id message)
+(defn- private-merge-pull-request! [repository pull-request pr-id message]
+  (common/merge-github-pull-request-inner! repository pull-request pr-id message)
   (assoc pull-request :pr-state "merged"))

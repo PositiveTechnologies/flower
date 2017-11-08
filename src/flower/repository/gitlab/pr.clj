@@ -10,7 +10,7 @@
 
 (declare private-get-gitlab-pull-requests-inner
          private-get-gitlab-pull-request-counters
-         private-merge-pull-request)
+         private-merge-pull-request!)
 
 
 ;;
@@ -45,14 +45,14 @@
   (get-target-branch [pull-request] pr-target-branch)
   (get-title [pull-request] pr-title)
   (get-counters [pull-request] pr-counters)
-  (merge-pull-request [pull-request] (private-merge-pull-request repository
-                                                                 pull-request
-                                                                 pr-id
-                                                                 nil))
-  (merge-pull-request [pull-request message] (private-merge-pull-request repository
-                                                                         pull-request
-                                                                         pr-id
-                                                                         message)))
+  (merge-pull-request! [pull-request] (private-merge-pull-request! repository
+                                                                   pull-request
+                                                                   pr-id
+                                                                   nil))
+  (merge-pull-request! [pull-request message] (private-merge-pull-request! repository
+                                                                           pull-request
+                                                                           pr-id
+                                                                           message)))
 
 
 (macros/public-definition get-gitlab-pull-requests cached)
@@ -127,7 +127,7 @@
       nil (.getMergeRequests conn-inner project-inner))))
 
 
-(defn- private-merge-pull-request [repository pull-request pr-id message]
+(defn- private-merge-pull-request! [repository pull-request pr-id message]
   (let [conn-inner (common/get-gitlab-conn-inner repository)
         project-inner (common/get-gitlab-project-inner repository)
         opened-pull-requests (.getOpenMergeRequests conn-inner project-inner)
