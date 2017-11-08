@@ -32,7 +32,9 @@
                              (.getName assignee)
                              nil))
           :task-state (.getState %)
-          :task-tags (.getLabels %)})
+          :task-tags (map (fn [label]
+                            (.toString label))
+                          (.getLabels %))})
        (if (empty? task-ids)
          (common/get-github-workitems-inner tracker)
          (common/get-github-workitems-inner tracker task-ids))))
