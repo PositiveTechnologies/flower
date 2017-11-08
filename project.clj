@@ -1,4 +1,4 @@
-(defproject com.ptsecurity/flower "0.1.3"
+(defproject com.ptsecurity/flower "0.1.4-SNAPSHOT"
   :description "Flower is a library for integration with task trackers, repositories, messaging systems and more"
   :url "http://github.com/PositiveTechnologies/flower"
   :license {:name "MIT License"
