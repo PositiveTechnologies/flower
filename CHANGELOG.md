@@ -1,3 +1,7 @@
+# 0.1.5 - 2017-11-23
+
+- Updated dependencies to the most recent versions.
+
 # 0.1.4 - 2017-11-09
 
 - Fixed issue with impure functions.

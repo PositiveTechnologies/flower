@@ -1,7 +1,11 @@
 # Flower
 
+<img src="/images/logo/flower-logo.png" width="200px" height="209px"
+    alt="Flower logo" align="right" />
+
 [![Clojars](https://img.shields.io/clojars/v/com.ptsecurity/flower.svg)](https://clojars.org/com.ptsecurity/flower)
 [![Travis](https://img.shields.io/travis/PositiveTechnologies/flower.svg)](https://travis-ci.org/PositiveTechnologies/flower)
+[![Dependencies Status](https://versions.deps.co/PositiveTechnologies/flower/status.svg)](https://versions.deps.co/PositiveTechnologies/flower)
 
 Handles all your issue tracking tools and version control systems for you!
 
@@ -22,6 +26,12 @@ to new team members.
 
 If you need separate Python libraries with similar functionality, you may visit
 [DevOpsHQ](https://github.com/DevOpsHQ).
+
+## Installation
+
+To install, add the following to your project `:dependencies`:
+
+    [com.ptsecurity/flower "0.1.5"]
 
 ## Usage
 
