@@ -37,7 +37,7 @@
 
 (defrecord TFSTrackerIteration [tracker it-id it-name it-url it-path it-calendar it-current]
   proto/TrackerIterationProto
-  (get-id [iteration] it-id)
+  (get-iteration-id [iteration] it-id)
   (get-calendar [iteration] it-calendar)
   (get-capacity [iteration] (private-get-tfs-capacity tracker iteration)))
 

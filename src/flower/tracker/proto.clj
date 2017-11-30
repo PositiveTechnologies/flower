@@ -19,13 +19,15 @@
 
 
 (defprotocol TrackerTaskProto
+  (get-task-id [tracker-task])
   (get-tracker [tracker-task])
   (get-state [tracker-task])
-  (get-type [tracker-task]))
+  (get-type [tracker-task])
+  (update! [tracker-task]))
 
 
 (defprotocol TrackerIterationProto
-  (get-id [iteration])
+  (get-iteration-id [iteration])
   (get-calendar [iteration])
   (get-capacity [iteration]))
 

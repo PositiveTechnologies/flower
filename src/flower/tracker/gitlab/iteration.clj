@@ -38,7 +38,7 @@
 
 (defrecord GitlabTrackerIteration [tracker it-id it-name it-url it-path it-calendar it-current]
   proto/TrackerIterationProto
-  (get-id [iteration] it-id)
+  (get-iteration-id [iteration] it-id)
   (get-calendar [iteration] it-calendar)
   (get-capacity [iteration] (private-get-gitlab-capacity tracker iteration)))
 
@@ -57,8 +57,8 @@
 (defn- private-get-start-date [iteration-inner]
   (let [members (get (reflect/reflect iteration-inner) :members)]
     (if (empty? (set/select (fn [{name :name}]
-                                      (= name 'getStartDate))
-                                    members))
+                              (= name 'getStartDate))
+                            members))
       nil
       (.getStartDate iteration-inner))))
 

@@ -1,13 +1,13 @@
 # Flower
 
-<img src="/images/logo/flower-logo.png" width="200px" height="209px"
-    alt="Flower logo" align="right" />
-
 [![Clojars](https://img.shields.io/clojars/v/com.ptsecurity/flower.svg)](https://clojars.org/com.ptsecurity/flower)
 [![Travis](https://img.shields.io/travis/PositiveTechnologies/flower.svg)](https://travis-ci.org/PositiveTechnologies/flower)
 [![Dependencies Status](https://versions.deps.co/PositiveTechnologies/flower/status.svg)](https://versions.deps.co/PositiveTechnologies/flower)
 
 Handles all your issue tracking tools and version control systems for you!
+
+<img src="/images/logo/flower-logo.png" width="200px" height="209px"
+    alt="Flower logo" align="right" />
 
 The Flower library is a set of common protocols for repositories, task trackers, and messaging
 systems that includes integrations with the most common ones like Jira, TFS, GitLab, GitHub, and
@@ -31,7 +31,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [com.ptsecurity/flower "0.1.5"]
+    [com.ptsecurity/flower "0.1.6"]
 
 ## Usage
 
@@ -93,6 +93,19 @@ the beginning, if you want to get new values from the task tracker, clear cache 
 
 This behavior may change in the future: these functions may be integrated into the corresponding
 protocols or they will become part of the context macro.
+
+To change the state or some attributes of the the task (and implicitly clear cache) you
+may do the following (you should be authenticated beforehand, see next section):
+
+```clj
+(def some-task (first (tracker.proto/get-tasks (first (:pt-github pt-trackers)))))
+
+(tracker.proto/update! (assoc some-task
+                              :task-title "New title"
+                              :task-tags ["feature"]
+                              :task-assignee "your_login_here"
+                              :task-state "close"))
+```
 
 
 ### Authentication

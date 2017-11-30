@@ -1,11 +1,14 @@
 (ns flower.tracker.github.common
-  (:require [flower.macros :as macros]
+  (:require [clojure.string :as string]
+            [flower.macros :as macros]
             [flower.tracker.proto :as proto])
   (:import (java.net URL)
+           (org.eclipse.egit.github.core Label)
            (org.eclipse.egit.github.core.client GitHubClient)
            (org.eclipse.egit.github.core.service RepositoryService
                                                  IssueService
-                                                 MilestoneService)))
+                                                 MilestoneService
+                                                 UserService)))
 
 
 ;;
@@ -18,6 +21,7 @@
 (macros/public-definition get-github-workitems-inner cached)
 (macros/public-definition get-github-iterations-inner cached)
 (macros/public-definition get-github-capacity-inner cached)
+(macros/public-definition set-github-workitem-inner!)
 
 
 ;;
@@ -45,7 +49,7 @@
   (let [organization-name (-> (URL. (proto/get-tracker-url tracker))
                               (.getPath)
                               (rest)
-                              (clojure.string/join))
+                              (string/join))
         conn-inner (get-github-conn-inner tracker)
         repository-service (RepositoryService. conn-inner)]
     (.getOrgRepositories repository-service organization-name)))
@@ -80,3 +84,37 @@
 
 (defn- private-get-github-capacity-inner [tracker iteration]
   nil)
+
+
+(defn- private-set-github-workitem-inner! [tracker task-id fields]
+  (let [conn-inner (get-github-conn-inner tracker)
+        project-inner (get-github-project-inner tracker)
+        issue-service (IssueService. conn-inner)
+        user-service (UserService. conn-inner)
+        workitem-inner (first (get-github-workitems-inner tracker [task-id]))
+        workitem-inner-new (if workitem-inner
+                             (doto workitem-inner
+                               (.setTitle (if (contains? fields :task-title)
+                                            (get fields :task-title)
+                                            (.getTitle workitem-inner)))
+                               (.setUser (if (contains? fields :task-assignee)
+                                           (let [assignee-name (get fields :task-assignee)]
+                                             (and assignee-name
+                                                  (.getUser user-service assignee-name)))
+                                           (.getUser workitem-inner)))
+                               (.setLabels (if (contains? fields :task-tags)
+                                             (let [tags (get fields :task-tags)]
+                                               (and tags
+                                                    (map (fn [label-name]
+                                                           (doto (Label.)
+                                                             (.setName label-name)))
+                                                         tags)))
+                                             (.getLabels workitem-inner)))
+                               (.setState (if (contains? fields :task-state)
+                                            (get fields :task-state)
+                                            (.getState workitem-inner))))
+                             nil)]
+    (if workitem-inner-new
+      (.editIssue issue-service
+                  project-inner
+                  workitem-inner-new))))

@@ -1,3 +1,8 @@
+# 0.1.6 - 2017-11-30
+
+- Added ability to change state and attributes for tracker tasks.
+- Fixed tracker protocols to avoid collisions.
+
 # 0.1.5 - 2017-11-23
 
 - Updated dependencies to the most recent versions.

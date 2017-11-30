@@ -1,10 +1,12 @@
-(defproject com.ptsecurity/flower "0.1.5"
+(defproject com.ptsecurity/flower "0.1.6"
   :description "Flower is a library for integration with task trackers, repositories, messaging systems and more"
   :url "http://github.com/PositiveTechnologies/flower"
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
-  :plugins [[jonase/eastwood "0.2.5"]]
-  :aliases {"test" ["eastwood"]}
+  :plugins [[jonase/eastwood "0.2.5"]
+            [lein-cljfmt "0.5.7"]]
+  :cljfmt {:remove-consecutive-blank-lines? false}
+  :aliases {"test" ["do" ["cljfmt" "check"] ["eastwood"]]}
   :repositories {"atlassian-public" "https://maven.atlassian.com/content/repositories/atlassian-public/"
                  "sonatype" "https://oss.sonatype.org/content/repositories/releases"}
   :dependencies [[org.clojure/clojure "1.8.0"]

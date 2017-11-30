@@ -13,6 +13,7 @@
 (macros/public-definition get-tfs-query-inner cached)
 (macros/public-definition get-tfs-iterations-inner cached)
 (macros/public-definition get-tfs-capacity-inner cached)
+(macros/public-definition set-tfs-workitem-inner!)
 
 
 ;;
@@ -70,7 +71,7 @@
   (with-tfs-function tracker true ("/_apis/work/teamsettings") {} :_links
     (with-tfs-auth (get-in result [:teamIterations :href]) {} :value
       (if-let [iteration-url (-> (filter (fn [iteration-inner]
-                                           (= 0 (compare (proto/get-id iteration)
+                                           (= 0 (compare (proto/get-iteration-id iteration)
                                                          (get iteration-inner :id))))
                                          result)
                                  (first)
@@ -78,3 +79,26 @@
         (with-tfs-auth iteration-url {} :_links
           (with-tfs-auth (get-in result [:capacity :href]) {} :value
             result))))))
+
+
+(defn- private-set-tfs-workitem-inner! [tracker task-id fields]
+  (let [auth (get-in (proto/get-tracker-component tracker)
+                     [:auth]
+                     {})
+        login (get auth :tfs-login)
+        password (get auth :tfs-password)
+        operations (map (fn [[key value]] {:op :add
+                                           :path (str "/fields/" (name key))
+                                           :value value})
+                        fields)
+        operations-str (json/write-str operations :escape-slash false)
+        task-url (str (proto/get-tracker-url tracker)
+                      "/_apis/wit/workitems/"
+                      task-id
+                      "?api-version=1.0")
+        response (client/patch task-url
+                               {:basic-auth [login password]
+                                :content-type :json-patch+json
+                                :accept :json
+                                :body operations-str})]
+    response))

@@ -1,7 +1,9 @@
 (ns flower.tracker.gitlab.common
-  (:require [flower.macros :as macros]
+  (:require [clojure.string :as string]
+            [flower.macros :as macros]
             [flower.tracker.proto :as proto])
-  (:import org.gitlab.api.GitlabAPI))
+  (:import (org.gitlab.api GitlabAPI)
+           (org.gitlab.api.models GitlabIssue$Action)))
 
 
 ;;
@@ -14,6 +16,7 @@
 (macros/public-definition get-gitlab-workitems-inner cached)
 (macros/public-definition get-gitlab-iterations-inner cached)
 (macros/public-definition get-gitlab-capacity-inner cached)
+(macros/public-definition set-gitlab-workitem-inner!)
 
 
 ;;
@@ -66,3 +69,44 @@
 
 (defn- private-get-gitlab-capacity-inner [tracker iteration]
   nil)
+
+
+(defn- private-set-gitlab-workitem-inner! [tracker task-id fields]
+  (let [conn-inner (get-gitlab-conn-inner tracker)
+        workitem-inner (first (get-gitlab-workitems-inner tracker [task-id]))
+        assignee-name (get fields :task-assignee)
+        assignee (and assignee-name
+                      (first (.findUsers conn-inner assignee-name)))
+        state (get fields :task-state)
+        milestone (.getMilestone workitem-inner)
+        project-id (.getProjectId workitem-inner)
+        issue-id (.getId workitem-inner)
+        assignee-id (if assignee
+                      (.getId assignee)
+                      0)
+        milestone-id (if milestone
+                       (.getId milestone)
+                       0)
+        labels (string/join ","
+                            (if (contains? fields :task-tags)
+                              (get fields :task-tags)
+                              (seq (.getLabels workitem-inner))))
+        description (.getDescription workitem-inner)
+        title (if (contains? fields :task-title)
+                (get fields :task-title)
+                (.getTitle workitem-inner))
+        action (if state
+                 (if (= state "opened")
+                   GitlabIssue$Action/REOPEN
+                   GitlabIssue$Action/CLOSE)
+                 GitlabIssue$Action/LEAVE)]
+    (.editIssue conn-inner
+                project-id
+                issue-id
+                assignee-id
+                milestone-id
+                labels
+                description
+                title
+                action)
+    workitem-inner))
