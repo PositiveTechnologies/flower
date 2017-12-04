@@ -1,5 +1,6 @@
 (ns flower.messaging.core
   (:require [com.stuartsierra.component :as component]
+            [flower.common :as common]
             [flower.messaging.proto :as proto]
             [flower.messaging.exchange.mailbox :as exchange.mailbox]))
 
@@ -27,3 +28,17 @@
 
 (defn start-component [args]
   (map->MessagingComponent args))
+
+
+(defn get-messaging-info [& messaging-full-url]
+  {:messaging-type :exchange
+   :messaging-name :exchange})
+
+
+(defn get-messaging [& messaging-full-url]
+  (let [messaging-info (apply get-messaging-info messaging-full-url)
+        messaging-name (get messaging-info :messaging-name :messaging)]
+    (first (get (messaging (start-component {:auth common/*component-auth*
+                                             :context common/*component-context*})
+                           {messaging-name messaging-info})
+                messaging-name))))

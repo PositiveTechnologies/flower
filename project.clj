@@ -1,4 +1,4 @@
-(defproject com.ptsecurity/flower "0.1.6"
+(defproject com.ptsecurity/flower "0.2.0"
   :description "Flower is a library for integration with task trackers, repositories, messaging systems and more"
   :url "http://github.com/PositiveTechnologies/flower"
   :license {:name "MIT License"
@@ -13,6 +13,7 @@
                  [org.clojure/core.memoize "0.5.9"]
                  [org.clojure/data.json "0.2.6"]
                  [com.stuartsierra/component "0.3.2"]
+                 [com.cemerick/url "0.1.1"]
                  [tesser.core "1.0.2"]
                  [joda-time/joda-time "2.9.9"]
                  [org.gitlab/java-gitlab-api "1.2.8"]

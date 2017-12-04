@@ -1,3 +1,8 @@
+# 0.2.0 - 2017-12-05
+
+- Added shorthand notations to create single records for trackers, repositories and messaging.
+- Added macro to supply default credentials while using shorthand notations.
+
 # 0.1.6 - 2017-11-30
 
 - Added ability to change state and attributes for tracker tasks.

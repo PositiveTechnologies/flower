@@ -31,7 +31,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [com.ptsecurity/flower "0.1.6"]
+    [com.ptsecurity/flower "0.2.0"]
 
 ## Usage
 
@@ -46,6 +46,26 @@ that may be explicitly cleared by a user after each query if so needed. To do it
 call `(function-name-clear-cache!)` where `function-name` is a function defined with the
 `public-definition` macro.
 
+
+### For impatient
+
+```clj
+(require '[clojure.string])
+(require '[flower.tracker.core :as tracker.core]
+         '[flower.tracker.proto :as tracker.proto])
+
+;; Print all opened tasks in our task tracker
+(loop [tasks (-> "https://github.com/PositiveTechnologies/flower"
+                 (tracker.core/get-tracker)
+                 (tracker.proto/get-tasks))]
+  (if (not-empty tasks)
+    (let [task-parts (-> (first tasks)
+                         (select-keys [:task-type :task-id :task-title])
+                         (vals))
+          task-string (clojure.string/join " " task-parts)]
+      (println task-string)
+      (recur (rest tasks)))))
+```
 
 ### Task trackers
 
@@ -71,10 +91,16 @@ Here we created the `pt-trackers` hash map with `:pt-github` as a key and a list
 the tracker in `:tracker-url`, and your current projects in `:tracker-projects`.
 Make sure you specified the `:auth` key in `start-component`.
 
+There is a shorthand notation to create single tracker record:
+
+```clj
+(def pt-github-tracker (tracker.core/get-tracker "https://github.com/PositiveTechnologies/flower"))
+```
+
 Now you are all set to check your list of issues on GitHub:
 
 ```clj
-(tracker.proto/get-tasks (first (:pt-github pt-trackers)))
+(tracker.proto/get-tasks pt-github-tracker)
 ```
 
 The next call for this method will give you the same result at lightning speed. As we mentioned in
@@ -88,7 +114,7 @@ the beginning, if you want to get new values from the task tracker, clear cache 
 (github.common/get-github-workitems-inner-clear-cache!)
 
 ;; This time GitHub APIs will be called again. Pay attention to the API rate limit!
-(tracker.proto/get-tasks (first (:pt-github pt-trackers)))
+(tracker.proto/get-tasks pt-github-tracker)
 ```
 
 This behavior may change in the future: these functions may be integrated into the corresponding
@@ -98,7 +124,7 @@ To change the state or some attributes of the the task (and implicitly clear cac
 may do the following (you should be authenticated beforehand, see next section):
 
 ```clj
-(def some-task (first (tracker.proto/get-tasks (first (:pt-github pt-trackers)))))
+(def some-task (first (tracker.proto/get-tasks pt-github-tracker)))
 
 (tracker.proto/update! (assoc some-task
                               :task-title "New title"
@@ -165,6 +191,18 @@ You may use the following properties for `:auth`:
 * `:github-login` and `:github-password` or `:github-token` for GitHub
 * `:gitlab-login` and `:gitlab-password` for GitLab
 
+There is also a convenient macro that uses `flower.credentials` under the hood that supplies necessary
+credentials in `start-component` functions. It is supposed to be used in pair with
+`flower.tracker.core/get-tracker`, `flower.repository.core/get-repository` and
+`flower.messaging.core/get-messaging` definitions:
+
+```clj
+(require '[flower.macros :as macros])
+(require '[flower.tracker.core :as tracker.core])
+
+(macros/with-default-credentials
+  (def inner-gitlab-tracker (tracker.core/get-tracker "https://gitlab.example.com/example/example-project")))
+```
 
 ### Repositories
 
@@ -183,20 +221,26 @@ section above, but this time for our repositories:
                                                            :repo-projects ["flower"]}})))
 ```
 
+There is also a shorthand notation to create single repository record:
+
+```clj
+(def pt-github-repo (repository.core/get-repository "https://github.com/PositiveTechnologies/flower"))
+```
+
 Let's find out the title and the corresponding source branch for every pull request in our
 repository:
 
 ```clj
 (map #(list (repository.proto/get-title %)
             (repository.proto/get-source-branch %))
-     (repository.proto/get-pull-requests (first (:pt-github pt-repos))))
+     (repository.proto/get-pull-requests pt-github-repo))
 ```
 
 Let's merge some opened pull request (make sure you specified `:auth` beforehand,
 see previous section):
 
 ```clj
-(let [first-opened-pr (first (repository.proto/get-pull-requests (first (:pt-github pt-repos))
+(let [first-opened-pr (first (repository.proto/get-pull-requests pt-github-repo
                                                                  {:pr-state "opened"}))]
   (repository.proto/merge-pull-request! first-opened-pr))
 ```
@@ -227,10 +271,21 @@ To send or receive emails, do the following:
                                              {:our-mail {:messaging-type :exchange}}))
 ```
 
+Or simply the following:
+
+```clj
+(require '[flower.macros :as macros])
+(require '[flower.messaging.core :as messaging.core]
+         '[flower.messaging.proto :as messaging.proto])
+
+(macros/with-default-credentials
+  (def our-mail (messaging.core/get-messaging)))
+```
+
 Now let's search for the first message from the top in our inbox:
 
 ```clj
-(def top-message (first (messaging.proto/search-messages (first (:our-mail our-messaging))
+(def top-message (first (messaging.proto/search-messages our-mail
                                                          {:count 1 :load-body true})))
 ```
 

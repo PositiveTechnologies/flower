@@ -1,6 +1,9 @@
 (ns flower.repository.core
-  (:require [com.stuartsierra.component :as component]
+  (:require [clojure.string :as string]
+            [com.stuartsierra.component :as component]
+            [cemerick.url :as url]
             [tesser.core :as tesser]
+            [flower.common :as common]
             [flower.repository.proto :as proto]
             [flower.repository.gitlab.repo :as gitlab.repo]
             [flower.repository.github.repo :as github.repo]))
@@ -92,3 +95,35 @@
                                 [:context :pull-requests-filter-function]
                                 (fn [pull-request] true))
                         (proto/get-pull-requests repository options)))))
+
+
+(defn get-repository-info [repository-full-url]
+  (let [repository-url (url/url repository-full-url)
+        repository-domain (get repository-url :host)
+        repository-path-components (string/split (string/replace (get repository-url :path "/")
+                                                                 #"(\.git)?/?$"
+                                                                 "")
+                                                 #"/")
+        repository-path-first (string/join "/" (take 2 repository-path-components))
+        repository-path-second (first (drop 2 repository-path-components))
+        repository-path-third (first (drop 3 repository-path-components))
+        repository-path-last (last repository-path-components)]
+    (cond (= repository-domain "github.com") {:repo-type :github
+                                              :repo-url (str (assoc repository-url
+                                                                    :path repository-path-first))
+                                              :repo-projects [repository-path-second]
+                                              :repo-name (keyword (str "github-" repository-domain "-" repository-path-second))}
+          (.contains repository-domain "gitlab") {:repo-type :gitlab
+                                                  :repo-url (str (assoc repository-url
+                                                                        :path ""))
+                                                  :repo-projects [repository-path-second]
+                                                  :repo-name (keyword (str "gitlab-" repository-domain "-" repository-path-second))})))
+
+
+(defn get-repository [repository-full-url]
+  (let [repository-info (get-repository-info repository-full-url)
+        repository-name (get repository-info :repo-name :repository)]
+    (first (get (repositories (start-component {:auth common/*component-auth*
+                                                :context common/*component-context*})
+                              {repository-name repository-info})
+                repository-name))))
