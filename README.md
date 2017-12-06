@@ -47,7 +47,7 @@ call `(function-name-clear-cache!)` where `function-name` is a function defined 
 `public-definition` macro.
 
 
-### For impatient
+### For the impatient
 
 ```clj
 (require '[clojure.string])
@@ -91,7 +91,7 @@ Here we created the `pt-trackers` hash map with `:pt-github` as a key and a list
 the tracker in `:tracker-url`, and your current projects in `:tracker-projects`.
 Make sure you specified the `:auth` key in `start-component`.
 
-There is a shorthand notation to create single tracker record:
+Here is a shorthand notation to create a single tracker record:
 
 ```clj
 (def pt-github-tracker (tracker.core/get-tracker "https://github.com/PositiveTechnologies/flower"))
@@ -191,9 +191,9 @@ You may use the following properties for `:auth`:
 * `:github-login` and `:github-password` or `:github-token` for GitHub
 * `:gitlab-login` and `:gitlab-password` for GitLab
 
-There is also a convenient macro that uses `flower.credentials` under the hood that supplies necessary
-credentials in `start-component` functions. It is supposed to be used in pair with
-`flower.tracker.core/get-tracker`, `flower.repository.core/get-repository` and
+Here is a convenient macro that uses `flower.credentials` under the hood and supplies necessary
+credentials to `start-component` functions. It is supposed to be used together with
+`flower.tracker.core/get-tracker`, `flower.repository.core/get-repository`, and
 `flower.messaging.core/get-messaging` definitions:
 
 ```clj
@@ -221,7 +221,7 @@ section above, but this time for our repositories:
                                                            :repo-projects ["flower"]}})))
 ```
 
-There is also a shorthand notation to create single repository record:
+Here is a shorthand notation to create a single repository record:
 
 ```clj
 (def pt-github-repo (repository.core/get-repository "https://github.com/PositiveTechnologies/flower"))
@@ -247,7 +247,7 @@ see previous section):
 
 ### Messaging
 
-To send or receive emails, do the following:
+To send or receive emails, do this:
 
 ```clj
 (require '[flower.credentials :as credentials])
@@ -271,7 +271,7 @@ To send or receive emails, do the following:
                                              {:our-mail {:messaging-type :exchange}}))
 ```
 
-Or simply the following:
+Or this:
 
 ```clj
 (require '[flower.macros :as macros])
