@@ -4,7 +4,8 @@
             [flower.tracker.proto :as proto])
   (:import (java.net URL)
            (org.eclipse.egit.github.core Label)
-           (org.eclipse.egit.github.core.client GitHubClient)
+           (org.eclipse.egit.github.core.client GitHubClient
+                                                RequestException)
            (org.eclipse.egit.github.core.service RepositoryService
                                                  IssueService
                                                  MilestoneService
@@ -46,13 +47,15 @@
 
 
 (defn- private-get-github-projects-inner [tracker]
-  (let [organization-name (-> (URL. (proto/get-tracker-url tracker))
-                              (.getPath)
-                              (rest)
-                              (string/join))
+  (let [user-name (-> (URL. (proto/get-tracker-url tracker))
+                      (.getPath)
+                      (rest)
+                      (string/join))
         conn-inner (get-github-conn-inner tracker)
         repository-service (RepositoryService. conn-inner)]
-    (.getOrgRepositories repository-service organization-name)))
+    (try
+      (.getOrgRepositories repository-service user-name)
+      (catch RequestException re (.getRepositories repository-service user-name)))))
 
 
 (defn- private-get-github-project-inner [tracker]

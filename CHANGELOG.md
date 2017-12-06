@@ -1,3 +1,8 @@
+# 0.2.1 - 2017-12-06
+
+- Added ability to use GitHub user repositories along with organization ones.
+- Changed project namespace to "flower" on Clojars.
+
 # 0.2.0 - 2017-12-05
 
 - Added shorthand notations to create single records for trackers, repositories and messaging.

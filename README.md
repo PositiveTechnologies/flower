@@ -1,6 +1,6 @@
 # Flower
 
-[![Clojars](https://img.shields.io/clojars/v/com.ptsecurity/flower.svg)](https://clojars.org/com.ptsecurity/flower)
+[![Clojars](https://img.shields.io/clojars/v/flower.svg)](https://clojars.org/flower)
 [![Travis](https://img.shields.io/travis/PositiveTechnologies/flower.svg)](https://travis-ci.org/PositiveTechnologies/flower)
 [![Dependencies Status](https://versions.deps.co/PositiveTechnologies/flower/status.svg)](https://versions.deps.co/PositiveTechnologies/flower)
 
@@ -31,7 +31,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [com.ptsecurity/flower "0.2.0"]
+    [flower "0.2.1"]
 
 ## Usage
 
@@ -55,16 +55,16 @@ call `(function-name-clear-cache!)` where `function-name` is a function defined 
          '[flower.tracker.proto :as tracker.proto])
 
 ;; Print all opened tasks in our task tracker
-(loop [tasks (-> "https://github.com/PositiveTechnologies/flower"
-                 (tracker.core/get-tracker)
-                 (tracker.proto/get-tasks))]
-  (if (not-empty tasks)
-    (let [task-parts (-> (first tasks)
+(loop [[task & other-tasks] (-> "https://github.com/PositiveTechnologies/flower"
+                                (tracker.core/get-tracker)
+                                (tracker.proto/get-tasks))]
+  (if task
+    (let [task-parts (-> task
                          (select-keys [:task-type :task-id :task-title])
                          (vals))
           task-string (clojure.string/join " " task-parts)]
       (println task-string)
-      (recur (rest tasks)))))
+      (recur other-tasks))))
 ```
 
 ### Task trackers

@@ -1,8 +1,10 @@
 (ns flower.repository.github.common
-  (:require [flower.macros :as macros]
+  (:require [clojure.string :as string]
+            [flower.macros :as macros]
             [flower.repository.proto :as proto])
   (:import (java.net URL)
-           (org.eclipse.egit.github.core.client GitHubClient)
+           (org.eclipse.egit.github.core.client GitHubClient
+                                                RequestException)
            (org.eclipse.egit.github.core.service PullRequestService
                                                  RepositoryService)))
 
@@ -41,13 +43,15 @@
 
 
 (defn- private-get-github-projects-inner [repository]
-  (let [organization-name (-> (URL. (proto/get-repository-url repository))
-                              (.getPath)
-                              (rest)
-                              (clojure.string/join))
+  (let [user-name (-> (URL. (proto/get-repository-url repository))
+                      (.getPath)
+                      (rest)
+                      (string/join))
         conn-inner (get-github-conn-inner repository)
         repository-service (RepositoryService. conn-inner)]
-    (.getOrgRepositories repository-service organization-name)))
+    (try
+      (.getOrgRepositories repository-service user-name)
+      (catch RequestException re (.getRepositories repository-service user-name)))))
 
 
 (defn- private-get-github-project-inner [repository]
