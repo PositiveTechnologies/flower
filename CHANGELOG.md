@@ -1,3 +1,9 @@
+# 0.3.0 - 2017-12-11
+
+- Added ability to fill in repository and tracker types manually for shorthand notation.
+- Decomposed project into smaller components.
+- Added Leiningen template to create new applications instantly.
+
 # 0.2.1 - 2017-12-06
 
 - Added ability to use GitHub user repositories along with organization ones.

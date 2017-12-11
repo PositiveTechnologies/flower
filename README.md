@@ -31,7 +31,11 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.2.1"]
+    [flower "0.3.0"]
+
+Or use the Leiningen template to build a new application from scratch:
+
+    lein new flower my-flower-application
 
 ## Usage
 
@@ -95,6 +99,15 @@ Here is a shorthand notation to create a single tracker record:
 
 ```clj
 (def pt-github-tracker (tracker.core/get-tracker "https://github.com/PositiveTechnologies/flower"))
+```
+
+The tracker type is identified by its domain name. If it failed to get identified automatically, use the `flower.tracker.core/with-tracker-type` macro to set the type manually:
+
+```clj
+(require '[flower.tracker.core :as tracker.core])
+
+(tracker.core/with-tracker-type :jira
+  (def jira-tracker (tracker.core/get-tracker "https://jr.example.com/projects/EXAMPLE/summary")))
 ```
 
 Now you are all set to check your list of issues on GitHub:
@@ -225,6 +238,17 @@ Here is a shorthand notation to create a single repository record:
 
 ```clj
 (def pt-github-repo (repository.core/get-repository "https://github.com/PositiveTechnologies/flower"))
+```
+
+The repository type is identified by its domain name. If it failed to get identified automatically, use the `flower.repository.core/with-repository-type` macro to set the type manually:
+
+```clj
+(require '[flower.macros :as macros])
+(require '[flower.repository.core :as repository.core])
+
+(macros/with-default-credentials
+  (repository.core/with-repository-type :gitlab
+    (def gitlab-repo (repository.core/get-repository "https://git.example.com/example/example-project"))))
 ```
 
 Let's find out the title and the corresponding source branch for every pull request in our
