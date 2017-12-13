@@ -16,13 +16,13 @@
 ;; Public definitions
 ;;
 
-(defrecord JiraTrackerTask [tracker task-id task-title task-type task-state task-tags]
+(defrecord JiraTrackerTask [tracker task-id task-title task-type task-state task-tags task-description]
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
-  (update! [tracker-task] (private-set-jira-workitem! tracker-task)))
+  (upsert! [tracker-task] (private-set-jira-workitem! tracker-task)))
 
 
 (macros/public-definition get-jira-workitems cached)
@@ -43,7 +43,8 @@
                              (.getName assignee)
                              nil))
           :task-state (.getName (.getStatus %))
-          :task-tags (.getLabels %)})
+          :task-tags (.getLabels %)
+          :task-description (.getDescription %)})
        (if (empty? task-ids)
          (list)
          (common/get-jira-workitems-inner tracker task-ids))))
@@ -60,8 +61,11 @@
   (let [tracker (proto/get-tracker tracker-task)
         task-id (proto/get-task-id tracker-task)
         old-workitem (first (proto/get-tasks tracker [task-id]))
-        fields (second (data/diff old-workitem tracker-task))]
-    (common/set-jira-workitem-inner! tracker task-id fields)
+        fields (second (data/diff old-workitem tracker-task))
+        task-inner (common/set-jira-workitem-inner! tracker task-id fields)
+        new-task-id (if task-inner
+                      (.getKey task-inner)
+                      task-id)]
     (common/get-jira-workitems-inner-clear-cache!)
     (get-jira-workitems-clear-cache!)
-    tracker-task))
+    (first (proto/get-tasks tracker [new-task-id]))))

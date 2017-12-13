@@ -8,6 +8,7 @@
 (defprotocol TrackerProto
   (get-tracker-component [tracker])
   (tracker-name-only [tracker])
+  (get-tracker-type [tracker])
   (get-project-name [tracker])
   (get-projects [tracker])
   (get-tasks
@@ -23,7 +24,7 @@
   (get-tracker [tracker-task])
   (get-state [tracker-task])
   (get-type [tracker-task])
-  (update! [tracker-task]))
+  (upsert! [tracker-task]))
 
 
 (defprotocol TrackerIterationProto

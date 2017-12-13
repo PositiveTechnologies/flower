@@ -5,9 +5,13 @@
             [flower.common :as common]
             [flower.tracker.proto :as proto]
             [flower.tracker.github.tracker :as github.tracker]
+            [flower.tracker.github.task :as github.task]
             [flower.tracker.gitlab.tracker :as gitlab.tracker]
+            [flower.tracker.gitlab.task :as gitlab.task]
             [flower.tracker.jira.tracker :as jira.tracker]
-            [flower.tracker.tfs.tracker :as tfs.tracker]))
+            [flower.tracker.jira.task :as jira.task]
+            [flower.tracker.tfs.tracker :as tfs.tracker]
+            [flower.tracker.tfs.task :as tfs.task]))
 
 
 ;;
@@ -98,3 +102,14 @@
                                             :context common/*component-context*})
                           {tracker-name tracker-info})
                 tracker-name))))
+
+
+(defn task [task-data]
+  (let [tracker (get task-data :tracker)
+        tracker-type (proto/get-tracker-type tracker)
+        task-function (case tracker-type
+                        :tfs tfs.task/map->TFSTrackerTask
+                        :gitlab gitlab.task/map->GitlabTrackerTask
+                        :jira jira.task/map->JiraTrackerTask
+                        :github github.task/map->GithubTrackerTask)]
+    (task-function task-data)))

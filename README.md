@@ -31,9 +31,9 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.3.0"]
+    [flower "0.3.1"]
 
-Or use the Leiningen template to build a new application from scratch:
+Or use the [Leiningen](https://leiningen.org/) template to build a new application from scratch:
 
     lein new flower my-flower-application
 
@@ -139,13 +139,23 @@ may do the following (you should be authenticated beforehand, see next section):
 ```clj
 (def some-task (first (tracker.proto/get-tasks pt-github-tracker)))
 
-(tracker.proto/update! (assoc some-task
+(tracker.proto/upsert! (assoc some-task
                               :task-title "New title"
                               :task-tags ["feature"]
                               :task-assignee "your_login_here"
                               :task-state "close"))
 ```
 
+The same `tracker.proto/upsert!` function may also be used to create new task in case `:task-id`
+field was not specified. New task record may be created by doing this:
+
+```clj
+(def new-task (tracker.core/task {:tracker pt-github-tracker
+                                  :task-title "Brand new shiny issue"
+                                  :task-description "Very long description goes here."}))
+
+(tracker.proto/upsert! new-task)
+```
 
 ### Authentication
 

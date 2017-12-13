@@ -18,6 +18,8 @@
 (macros/public-definition get-jira-conn-inner cached)
 (macros/public-definition get-jira-project-inner cached)
 (macros/public-definition get-jira-projects-inner cached)
+(macros/public-definition get-jira-issue-type-inner cached)
+(macros/public-definition get-jira-issue-types-inner cached)
 (macros/public-definition get-jira-workitems-inner cached)
 (macros/public-definition get-jira-iterations-inner cached)
 (macros/public-definition get-jira-capacity-inner cached)
@@ -60,10 +62,24 @@
         (.claim))))
 
 
+(defn- private-get-jira-issue-types-inner [tracker]
+  (-> (get-jira-conn-inner tracker)
+      (.getMetadataClient)
+      (.getIssueTypes)
+      (.claim)))
+
+
+(defn- private-get-jira-issue-type-inner [tracker issue-type]
+  (let [issue-types (get-jira-issue-types-inner tracker)]
+    (or (first (filter #(= issue-type (.getName %))
+                       issue-types))
+        (first issue-types))))
+
+
 (defn- private-get-jira-workitems-inner [tracker task-ids]
   (let [issue-client (.getIssueClient (get-jira-conn-inner tracker))]
     (-> (Promises/when (map #(.getIssue issue-client %)
-                            task-ids))
+                            (filter identity task-ids)))
         (.claim))))
 
 
@@ -78,9 +94,14 @@
 (defn- private-set-jira-workitem-inner! [tracker task-id fields]
   (let [conn-inner (get-jira-conn-inner tracker)
         issue-client (.getIssueClient conn-inner)
+        task-type (get fields :task-type)
         workitem-inner (first (get-jira-workitems-inner tracker [task-id]))
-        workitem-input-builder (IssueInputBuilder.)]
-    (if (contains? fields :task-state)
+        workitem-input-builder (doto (IssueInputBuilder.)
+                                 (.setProject (get-jira-project-inner tracker))
+                                 (.setIssueType (get-jira-issue-type-inner tracker
+                                                                           task-type)))]
+    (if (and workitem-inner
+             (contains? fields :task-state))
       (let [transitions (-> issue-client
                             (.getTransitions workitem-inner)
                             (.claim))
@@ -94,15 +115,19 @@
               (.claim)))))
     (if (contains? fields :task-title)
       (.setSummary workitem-input-builder (get fields :task-title)))
+    (if (contains? fields :task-description)
+      (.setDescription workitem-input-builder (get fields :task-description)))
     (if (contains? fields :task-assignee)
       (.setAssigneeName workitem-input-builder (get fields :task-assignee)))
     (if (contains? fields :task-tags)
       (.setFieldValue workitem-input-builder
                       (.id IssueFieldId/LABELS_FIELD)
                       (get fields :task-tags)))
-    (if (some true? (map (partial contains? fields)
-                         [:task-title :task-assignee :task-tags]))
+    (if workitem-inner
       (-> issue-client
           (.updateIssue task-id
                         (.build workitem-input-builder))
+          (.claim))
+      (-> issue-client
+          (.createIssue (.build workitem-input-builder))
           (.claim)))))

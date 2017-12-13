@@ -1,4 +1,4 @@
-(defproject flower/flower-messaging "0.3.0"
+(defproject flower/flower-messaging "0.3.1"
   :description "Flower messaging integration"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -12,8 +12,8 @@
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [com.stuartsierra/component "0.3.2"]
-                 [flower/flower-common "0.3.0"]
-                 [flower/flower-proto "0.3.0"]
-                 [flower/flower-integration-exchange "0.3.0"]]
+                 [flower/flower-common "0.3.1"]
+                 [flower/flower-proto "0.3.1"]
+                 [flower/flower-integration-exchange "0.3.1"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

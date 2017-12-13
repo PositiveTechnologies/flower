@@ -50,9 +50,10 @@
 ;;
 
 (defn- private-get-tfs-workitems-inner [tracker task-ids]
-  (let [query-string {:ids (clojure.string/join "," task-ids)}]
-    (with-tfs-function tracker false ("/_apis/wit/workitems") query-string :value
-      result)))
+  (if-not (empty? (filter identity task-ids))
+    (let [query-string {:ids (clojure.string/join "," task-ids)}]
+      (with-tfs-function tracker false ("/_apis/wit/workitems") query-string :value
+        result))))
 
 
 (defn- private-get-tfs-query-inner [tracker query-id]
@@ -87,18 +88,24 @@
                      {})
         login (get auth :tfs-login)
         password (get auth :tfs-password)
+        wit (get fields :System.WorkItemType "Task")
         operations (map (fn [[key value]] {:op :add
                                            :path (str "/fields/" (name key))
                                            :value value})
                         fields)
         operations-str (json/write-str operations :escape-slash false)
-        task-url (str (proto/get-tracker-url tracker)
+        task-url (str (if task-id
+                        (proto/get-tracker-url tracker)
+                        (proto/get-project-url tracker))
                       "/_apis/wit/workitems/"
-                      task-id
+                      (if-not (empty? task-id)
+                        task-id
+                        (str "$" wit))
                       "?api-version=1.0")
         response (client/patch task-url
                                {:basic-auth [login password]
                                 :content-type :json-patch+json
                                 :accept :json
-                                :body operations-str})]
-    response))
+                                :body operations-str})
+        response-body (get response :body "{}")]
+    (json/read-str response-body :key-fn keyword)))

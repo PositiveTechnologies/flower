@@ -22,6 +22,7 @@
   proto/TrackerProto
   (get-tracker-component [tracker] tracker-component)
   (tracker-name-only [tracker] (private-tracker-name-only tracker-name tracker-url))
+  (get-tracker-type [tracker] :jira)
   (get-project-name [tracker] tracker-project)
   (get-projects [tracker] (private-get-projects tracker tracker-name tracker-url))
   (get-tasks [tracker] (list))

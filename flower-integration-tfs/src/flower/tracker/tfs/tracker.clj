@@ -22,6 +22,7 @@
   proto/TrackerProto
   (get-tracker-component [tracker] tracker-component)
   (tracker-name-only [tracker] (private-tracker-name-only tracker-name tracker-url))
+  (get-tracker-type [tracker] :tfs)
   (get-project-name [tracker] tracker-project)
   (get-projects [tracker] (list))
   (get-tasks [tracker] (private-get-tasks tracker nil))

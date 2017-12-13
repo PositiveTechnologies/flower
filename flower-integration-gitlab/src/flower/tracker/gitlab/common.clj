@@ -55,7 +55,8 @@
   ([tracker] (let [conn-inner (get-gitlab-conn-inner tracker)
                    project-inner (get-gitlab-project-inner tracker)]
                (.getIssues conn-inner project-inner)))
-  ([tracker task-ids] (let [task-ids-list (into [] (map #(Integer. %) task-ids))]
+  ([tracker task-ids] (let [task-ids-list (into [] (map #(Integer. %)
+                                                        (filter identity task-ids)))]
                         (into [] (filter (fn [issue]
                                            (.contains task-ids-list (.getIid issue)))
                                          (get-gitlab-workitems-inner tracker))))))
@@ -78,35 +79,48 @@
         assignee (and assignee-name
                       (first (.findUsers conn-inner assignee-name)))
         state (get fields :task-state)
-        milestone (.getMilestone workitem-inner)
-        project-id (.getProjectId workitem-inner)
-        issue-id (.getId workitem-inner)
+        project-id (.getId (get-gitlab-project-inner tracker))
         assignee-id (if assignee
                       (.getId assignee)
-                      0)
-        milestone-id (if milestone
-                       (.getId milestone)
-                       0)
-        labels (string/join ","
-                            (if (contains? fields :task-tags)
-                              (get fields :task-tags)
-                              (seq (.getLabels workitem-inner))))
-        description (.getDescription workitem-inner)
-        title (if (contains? fields :task-title)
-                (get fields :task-title)
-                (.getTitle workitem-inner))
-        action (if state
-                 (if (= state "opened")
-                   GitlabIssue$Action/REOPEN
-                   GitlabIssue$Action/CLOSE)
-                 GitlabIssue$Action/LEAVE)]
-    (.editIssue conn-inner
-                project-id
-                issue-id
-                assignee-id
-                milestone-id
-                labels
-                description
-                title
-                action)
-    workitem-inner))
+                      0)]
+    (if workitem-inner
+      (let [milestone (.getMilestone workitem-inner)
+            milestone-id (if milestone
+                           (.getId milestone)
+                           0)
+            issue-id (.getId workitem-inner)
+            labels (string/join ","
+                                (if (contains? fields :task-tags)
+                                  (get fields :task-tags)
+                                  (seq (.getLabels workitem-inner))))
+            title (if (contains? fields :task-title)
+                    (get fields :task-title)
+                    (.getTitle workitem-inner))
+            description (if (contains? fields :task-description)
+                          (get fields :task-description)
+                          (.getDescription workitem-inner))
+            action (if state
+                     (if (= state "opened")
+                       GitlabIssue$Action/REOPEN
+                       GitlabIssue$Action/CLOSE)
+                     GitlabIssue$Action/LEAVE)]
+        (.editIssue conn-inner
+                    project-id
+                    issue-id
+                    assignee-id
+                    milestone-id
+                    labels
+                    description
+                    title
+                    action))
+      (let [milestone-id (Integer. 0)
+            description (get fields :task-description "")
+            labels (get fields :task-tags "")
+            title (get fields :task-title "")]
+        (.createIssue conn-inner
+                      project-id
+                      assignee-id
+                      milestone-id
+                      labels
+                      description
+                      title)))))

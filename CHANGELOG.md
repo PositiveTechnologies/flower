@@ -1,3 +1,8 @@
+# 0.3.1 - 2017-12-13
+
+- Added ability to create new tasks in all task trackers.
+- Added support for description field in tasks.
+
 # 0.3.0 - 2017-12-11
 
 - Added ability to fill in repository and tracker types manually for shorthand notation.
