@@ -65,8 +65,11 @@
             :it-name (get iteration-inner :name)
             :it-path (get iteration-inner :path)
             :it-url (get iteration-inner :url)
-            :it-calendar (map->TFSTrackerIterationCalendar {:it-cal-start-date start-date
-                                                            :it-cal-finish-date finish-date})
+            :it-calendar (map->TFSTrackerIterationCalendar
+                          {:it-cal-start-date (when start-date
+                                                (.toDate start-date))
+                           :it-cal-finish-date (when finish-date
+                                                 (.toDate finish-date))})
             :it-current (and (<= (compare start-date current-date) 0)
                              (<= (compare current-date finish-date) 0))}))
        (common/get-tfs-iterations-inner tracker)))

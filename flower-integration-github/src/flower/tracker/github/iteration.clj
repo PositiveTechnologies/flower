@@ -65,8 +65,10 @@
             :it-name (.getTitle iteration-inner)
             :it-path (.getTitle iteration-inner)
             :it-url (.getUrl iteration-inner)
-            :it-calendar (map->GithubTrackerIterationCalendar {:it-cal-start-date start-date
-                                                               :it-cal-finish-date finish-date})
+            :it-calendar (map->GithubTrackerIterationCalendar
+                          {:it-cal-start-date start-date
+                           :it-cal-finish-date (when finish-date
+                                                 (.toDate finish-date))})
             :it-current (and (<= (compare start-date current-date) 0)
                              (<= (compare current-date finish-date) 0))}))
        (common/get-github-iterations-inner tracker)))

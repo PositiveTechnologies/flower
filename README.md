@@ -31,7 +31,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.3.1"]
+    [flower "0.3.2"]
 
 Or use the [Leiningen](https://leiningen.org/) template to build a new application from scratch:
 
@@ -334,7 +334,7 @@ specific email with this:
 
 ## License
 
-Copyright © 2017 JSC Positive Technologies. All rights reserved.
+Copyright © 2017-2018 JSC Positive Technologies. All rights reserved.
 
 Distributed under the MIT License. See LICENSE.
 

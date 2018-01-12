@@ -1,15 +1,17 @@
-(defproject flower "0.3.1"
+(defproject flower "0.3.2"
   :description "Flower is a library for integration with task trackers, repositories, messaging systems and more"
   :url "http://github.com/PositiveTechnologies/flower"
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
-  :plugins [[lein-sub "0.3.0"]]
+  :plugins [[lein-sub "0.3.0"]
+            [lein-bump-version "0.1.6"]]
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [flower/flower-tracker "0.3.1"]
-                 [flower/flower-repository "0.3.1"]
-                 [flower/flower-messaging "0.3.1"]
-                 [flower/flower-team "0.3.1"]]
-  :aliases {"test" ["sub" "lint-and-test-all"]}
+                 [flower/flower-tracker "0.3.2"]
+                 [flower/flower-repository "0.3.2"]
+                 [flower/flower-messaging "0.3.2"]
+                 [flower/flower-team "0.3.2"]]
+  :aliases {"test" ["sub" "lint-and-test-all"]
+            "bump-all" ["do" ["bump-version"] ["sub" "bump-version"]]}
   :sub ["flower-proto"
         "flower-common"
         "flower-integration-github"

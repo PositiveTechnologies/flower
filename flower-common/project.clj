@@ -1,11 +1,12 @@
-(defproject flower/flower-common "0.3.1"
+(defproject flower/flower-common "0.3.2"
   :description "Flower common utilities"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
   :plugins [[jonase/eastwood "0.2.5"]
-            [lein-cljfmt "0.5.7"]]
+            [lein-cljfmt "0.5.7"]
+            [lein-bump-version "0.1.6"]]
   :cljfmt {:remove-consecutive-blank-lines? false}
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
             "test-all" ["with-profile" "default:+1.7:+1.8" "test"]

@@ -10,6 +10,8 @@
 
 (declare private-get-github-pull-requests-inner
          private-get-github-pull-request-counters
+         private-get-github-pull-request-commits
+         private-get-github-pull-request-files
          private-merge-pull-request!)
 
 
@@ -28,6 +30,22 @@
   (get-wips [pull-request-counters] count-wips))
 
 
+(defrecord GithubRepositoryPullRequestCommit [commit-id
+                                              commit-name
+                                              commit-author-name
+                                              commit-author-email
+                                              commit-author-date
+                                              commit-committer-name
+                                              commit-committer-email
+                                              commit-committer-date])
+
+
+(defrecord GithubRepositoryPullRequestFile [file-name
+                                            file-additions
+                                            file-deletions
+                                            file-changes])
+
+
 (defrecord GithubRepositoryPullRequest [repository
                                         pr-id
                                         pr-title
@@ -40,11 +58,16 @@
                                         task-ids]
   proto/RepositoryPullRequestProto
   (get-repository [pull-request] repository)
+  (get-pull-request-id [pull-request] pr-id)
   (get-state [pull-request] pr-state)
   (get-source-branch [pull-request] pr-source-branch)
   (get-target-branch [pull-request] pr-target-branch)
   (get-title [pull-request] pr-title)
   (get-counters [pull-request] pr-counters)
+  (get-commits [pull-request] (private-get-github-pull-request-commits repository
+                                                                       pull-request))
+  (get-files [pull-request] (private-get-github-pull-request-files repository
+                                                                   pull-request))
   (merge-pull-request! [pull-request] (private-merge-pull-request! repository
                                                                    pull-request
                                                                    pr-id
@@ -98,6 +121,40 @@
                                          (count)))
                           note-patterns)]
     (into (sorted-map) counter-list)))
+
+
+(defn- private-get-github-pull-request-commits [repository pull-request]
+  (let [commits (common/get-github-pull-request-commits-inner repository pull-request)]
+    (map #(map->GithubRepositoryPullRequestCommit
+           (let [commit (.getCommit %)
+                 author (.getAuthor commit)
+                 committer (.getCommitter commit)
+                 stats (.getStats %)
+                 result {:commit-id (.getSha %)
+                         :commit-name (.getMessage commit)
+                         :commit-author-name (.getName author)
+                         :commit-author-email (.getEmail author)
+                         :commit-author-date (.getDate author)
+                         :commit-committer-name (.getName committer)
+                         :commit-committer-email (.getEmail committer)
+                         :commit-committer-date (.getDate committer)}]
+             (if stats
+               (assoc result
+                      :commit-additions (.getAdditions stats)
+                      :commit-deletions (.getDeletions stats)
+                      :commit-total (.getTotal stats))
+               result)))
+         commits)))
+
+
+(defn- private-get-github-pull-request-files [repository pull-request]
+  (let [files (common/get-github-pull-request-files-inner repository pull-request)]
+    (map #(map->GithubRepositoryPullRequestFile
+           {:file-name (.getFilename %)
+            :file-additions (.getAdditions %)
+            :file-deletions (.getDeletions %)
+            :file-changes (.getChanges %)})
+         files)))
 
 
 (defn- private-get-github-pull-request-counters [repository pull-request]
