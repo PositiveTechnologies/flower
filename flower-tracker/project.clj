@@ -1,4 +1,4 @@
-(defproject flower/flower-tracker "0.3.2"
+(defproject flower/flower-tracker "0.3.3"
   :description "Flower trackers integration"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -13,11 +13,11 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [com.stuartsierra/component "0.3.2"]
                  [com.cemerick/url "0.1.1"]
-                 [flower/flower-common "0.3.2"]
-                 [flower/flower-proto "0.3.2"]
-                 [flower/flower-integration-github "0.3.2"]
-                 [flower/flower-integration-gitlab "0.3.2"]
-                 [flower/flower-integration-jira "0.3.2"]
-                 [flower/flower-integration-tfs "0.3.2"]]
+                 [flower/flower-common "0.3.3"]
+                 [flower/flower-proto "0.3.3"]
+                 [flower/flower-integration-github "0.3.3"]
+                 [flower/flower-integration-gitlab "0.3.3"]
+                 [flower/flower-integration-jira "0.3.3"]
+                 [flower/flower-integration-tfs "0.3.3"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

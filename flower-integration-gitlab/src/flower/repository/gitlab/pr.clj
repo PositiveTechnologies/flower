@@ -160,36 +160,6 @@
          grouped-list)))
 
 
-(comment defn- private-get-gitlab-pull-request-files [repository pull-request]
-  (let [conn-inner (common/get-gitlab-conn-inner repository)
-        project-inner (common/get-gitlab-project-inner repository)
-        project-id (.getId project-inner)
-        commits-inner (common/get-gitlab-commits-inner repository pull-request)
-        mapped (map (fn [commit]
-                      (let [hash (.getId commit)
-                            diffs (.getCommitDiffs conn-inner project-id hash)]
-                 (map (fn [diff]
-                        (let [splitted (clojure.string/split (.getDiff diff) #"\n")
-                              grouped (group-by first splitted)
-                              added (count (get grouped \+ []))
-                              deleted (count (get grouped \- []))]
-                          [(.getNewPath diff) added deleted]))
-                      diffs)))
-                    commits-inner)
-        flat-list (apply concat mapped)
-        grouped-list (group-by first flat-list)]
-    (map (fn [[file-name counters]]
-           (reduce (fn [acc [filename additions deletions]]
-                     (-> acc
-                         (update :file-additions #(+ (get % :file-additions 0) additions))
-                         (update :file-deletions #(+ (get % :file-deletions 0) deletions))
-                         (update :file-changes #(+ (get % :file-changes 0) (+ additions
-                                                                              deletions)))))
-                   (map->GitlabRepositoryPullRequestFile {:file-name file-name})
-                   counters))
-         grouped-list)))
-
-
 (defn- private-get-gitlab-pull-request-counters [repository pull-request-inner]
   (let [notes (.getNotes (common/get-gitlab-conn-inner repository) pull-request-inner)
         notes-map (private-get-pull-request-notes-counters-by-patterns (map #(.getBody %) notes)

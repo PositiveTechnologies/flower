@@ -31,7 +31,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.3.2"]
+    [flower "0.3.3"]
 
 Or use the [Leiningen](https://leiningen.org/) template to build a new application from scratch:
 
