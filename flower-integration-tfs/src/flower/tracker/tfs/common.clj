@@ -98,9 +98,11 @@
                         (proto/get-tracker-url tracker)
                         (proto/get-project-url tracker))
                       "/_apis/wit/workitems/"
-                      (if-not (empty? task-id)
-                        task-id
-                        (str "$" wit))
+                      (if (integer? task-id)
+                        (str task-id)
+                        (if-not (empty? task-id)
+                          task-id
+                          (str "$" wit)))
                       "?api-version=1.0")
         response (client/patch task-url
                                {:basic-auth [login password]

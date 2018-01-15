@@ -2,7 +2,7 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [flower "0.3.3"]]
+                 [flower "0.3.4"]]
   :main ^:skip-aot {{name}}.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

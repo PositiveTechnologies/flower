@@ -1,3 +1,12 @@
+# 0.3.4 - 2017-01-15
+
+- Fixed issue with TFS tracker task upserting.
+
+# 0.3.3 - 2017-01-12
+
+- Added ability to get pull request commits.
+- Added ability to get pull request files.
+
 # 0.3.1 - 2017-12-13
 
 - Added ability to create new tasks in all task trackers.

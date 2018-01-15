@@ -1,4 +1,4 @@
-(defproject flower/flower-integration-tfs "0.3.3"
+(defproject flower/flower-integration-tfs "0.3.4"
   :description "Flower integration with Microsoft TFS"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -16,7 +16,7 @@
                  [joda-time/joda-time "2.9.9"]
                  [clj-http "3.7.0"]
                  [clj-time "0.14.2"]
-                 [flower/flower-common "0.3.3"]
-                 [flower/flower-proto "0.3.3"]]
+                 [flower/flower-common "0.3.4"]
+                 [flower/flower-proto "0.3.4"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

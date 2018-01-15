@@ -1,4 +1,4 @@
-(defproject flower/flower-team "0.3.3"
+(defproject flower/flower-team "0.3.4"
   :description "Flower common utilities"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
