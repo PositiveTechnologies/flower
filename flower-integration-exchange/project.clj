@@ -1,4 +1,4 @@
-(defproject flower/flower-integration-exchange "0.3.4"
+(defproject flower/flower-integration-exchange "0.3.5"
   :description "Flower integration with Microsoft Exchange"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -15,7 +15,7 @@
                  "sonatype" "https://oss.sonatype.org/content/repositories/releases"}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [com.microsoft.ews-java-api/ews-java-api "2.0"]
-                 [flower/flower-common "0.3.4"]
-                 [flower/flower-proto "0.3.4"]]
+                 [flower/flower-common "0.3.5"]
+                 [flower/flower-proto "0.3.5"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

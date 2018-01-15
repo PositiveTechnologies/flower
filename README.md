@@ -31,7 +31,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.3.4"]
+    [flower "0.3.5"]
 
 Or use the [Leiningen](https://leiningen.org/) template to build a new application from scratch:
 
@@ -270,12 +270,14 @@ repository:
      (repository.proto/get-pull-requests pt-github-repo))
 ```
 
-Let's merge some opened pull request (make sure you specified `:auth` beforehand,
-see previous section):
+Let's get list of commits for some opened pull request and then merge it
+(make sure you specified `:auth` beforehand, see previous section):
 
 ```clj
 (let [first-opened-pr (first (repository.proto/get-pull-requests pt-github-repo
-                                                                 {:pr-state "opened"}))]
+                                                                 {:pr-state "opened"}))
+      commits (map :commit-id (repository.proto/get-commits first-opened-pr))]
+  (println commits)
   (repository.proto/merge-pull-request! first-opened-pr))
 ```
 
