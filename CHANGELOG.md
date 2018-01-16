@@ -1,3 +1,7 @@
+# 0.3.6 - 2018-01-16
+
+- Fixed issue with existing tags deletion in TFS tracker task upserting.
+
 # 0.3.5 - 2018-01-15
 
 - Fixed issue with TFS tracker task upserting.

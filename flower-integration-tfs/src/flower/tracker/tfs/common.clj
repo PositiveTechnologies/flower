@@ -103,11 +103,13 @@
                         (if-not (empty? task-id)
                           task-id
                           (str "$" wit)))
-                      "?api-version=1.0")
-        response (client/patch task-url
-                               {:basic-auth [login password]
-                                :content-type :json-patch+json
-                                :accept :json
-                                :body operations-str})
-        response-body (get response :body "{}")]
-    (json/read-str response-body :key-fn keyword)))
+                      "?api-version=1.0")]
+    (if (empty? operations)
+      {:id task-id}
+      (let [response (client/patch task-url
+                                   {:basic-auth [login password]
+                                    :content-type :json-patch+json
+                                    :accept :json
+                                    :body operations-str})
+            response-body (get response :body "{}")]
+        (json/read-str response-body :key-fn keyword)))))
