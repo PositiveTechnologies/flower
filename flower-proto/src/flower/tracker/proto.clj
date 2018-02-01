@@ -21,6 +21,7 @@
 
 (defprotocol TrackerTaskProto
   (get-task-id [tracker-task])
+  (get-task-url [tracker-task])
   (get-tracker [tracker-task])
   (get-state [tracker-task])
   (get-type [tracker-task])

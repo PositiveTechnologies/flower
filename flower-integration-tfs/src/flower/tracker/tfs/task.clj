@@ -11,6 +11,7 @@
 ;;
 
 (declare private-set-tfs-workitem!)
+(declare private-get-tfs-workitem-url)
 
 
 ;;
@@ -21,6 +22,7 @@
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
+  (get-task-url [tracker-task] (private-get-tfs-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
   (upsert! [tracker-task] (private-set-tfs-workitem! tracker-task)))
@@ -85,3 +87,9 @@
     (common/get-tfs-workitems-inner-clear-cache!)
     (get-tfs-workitems-clear-cache!)
     (first (proto/get-tasks tracker [new-task-id]))))
+
+
+(defn- private-get-tfs-workitem-url [tracker-task]
+  (let [tracker (proto/get-tracker tracker-task)
+        task-id (proto/get-task-id tracker-task)]
+    (str (proto/get-project-url tracker) "/_workitems/edit/" task-id)))

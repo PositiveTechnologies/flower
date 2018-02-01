@@ -10,6 +10,7 @@
 ;;
 
 (declare private-set-jira-workitem!)
+(declare private-get-jira-workitem-url)
 
 
 ;;
@@ -20,6 +21,7 @@
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
+  (get-task-url [tracker-task] (private-get-jira-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
   (upsert! [tracker-task] (private-set-jira-workitem! tracker-task)))
@@ -69,3 +71,10 @@
     (common/get-jira-workitems-inner-clear-cache!)
     (get-jira-workitems-clear-cache!)
     (first (proto/get-tasks tracker [new-task-id]))))
+
+
+(defn- private-get-jira-workitem-url [tracker-task]
+  (let [tracker (proto/get-tracker tracker-task)
+        project-url (proto/get-project-url tracker)
+        task-id (proto/get-task-id tracker-task)]
+    (str project-url "/issues/" task-id)))

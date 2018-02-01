@@ -28,7 +28,7 @@
   (get-tasks [tracker] (list))
   (get-tasks [tracker query] (private-get-tasks tracker query))
   (get-tracker-url [tracker] tracker-url)
-  (get-project-url [tracker] (str tracker-url "/" tracker-project))
+  (get-project-url [tracker] (str tracker-url "/projects/" tracker-project))
   (get-iterations [tracker] (private-get-iterations tracker)))
 
 

@@ -6,6 +6,7 @@
   :plugins [[lein-sub "0.3.0"]
             [lein-bump-version "0.1.6"]]
   :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/tools.namespace "0.2.11"]
                  [flower/flower-tracker "0.4.0-SNAPSHOT"]
                  [flower/flower-repository "0.4.0-SNAPSHOT"]
                  [flower/flower-messaging "0.4.0-SNAPSHOT"]

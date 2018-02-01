@@ -10,6 +10,7 @@
 ;;
 
 (declare private-set-github-workitem!)
+(declare private-get-github-workitem-url)
 
 
 ;;
@@ -20,6 +21,7 @@
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
+  (get-task-url [tracker-task] (private-get-github-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
   (upsert! [tracker-task] (private-set-github-workitem! tracker-task)))
@@ -68,3 +70,10 @@
     (common/get-github-workitems-inner-clear-cache!)
     (get-github-workitems-clear-cache!)
     (first (proto/get-tasks tracker [new-task-id]))))
+
+
+(defn- private-get-github-workitem-url [tracker-task]
+  (let [tracker (proto/get-tracker tracker-task)
+        project-url (proto/get-project-url tracker)
+        task-id (proto/get-task-id tracker-task)]
+    (str project-url "/issues/" task-id)))

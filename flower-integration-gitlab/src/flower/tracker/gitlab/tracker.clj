@@ -11,7 +11,8 @@
 (declare private-tracker-name-only
          private-get-projects
          private-get-tasks
-         private-get-iterations)
+         private-get-iterations
+         private-get-gitlab-project-path)
 
 
 ;;
@@ -28,7 +29,7 @@
   (get-tasks [tracker] (private-get-tasks tracker nil))
   (get-tasks [tracker query] (private-get-tasks tracker query))
   (get-tracker-url [tracker] tracker-url)
-  (get-project-url [tracker] (str tracker-url "/" tracker-project))
+  (get-project-url [tracker] (str tracker-url "/" (private-get-gitlab-project-path tracker)))
   (get-iterations [tracker] (private-get-iterations tracker)))
 
 
@@ -54,3 +55,7 @@
 
 (defn- private-get-iterations [tracker]
   (iteration/get-gitlab-iterations tracker))
+
+
+(defn- private-get-gitlab-project-path [tracker]
+  (.getPathWithNamespace (common/get-gitlab-project-inner tracker)))
