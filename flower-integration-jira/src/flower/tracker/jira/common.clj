@@ -21,6 +21,7 @@
 (macros/public-definition get-jira-issue-type-inner cached)
 (macros/public-definition get-jira-issue-types-inner cached)
 (macros/public-definition get-jira-workitems-inner cached)
+(macros/public-definition get-jira-query-inner cached)
 (macros/public-definition get-jira-iterations-inner cached)
 (macros/public-definition get-jira-capacity-inner cached)
 (macros/public-definition set-jira-workitem-inner!)
@@ -81,6 +82,14 @@
     (-> (Promises/when (map #(.getIssue issue-client %)
                             (filter identity task-ids)))
         (.claim))))
+
+
+(defn- private-get-jira-query-inner [tracker query]
+  (-> (get-jira-conn-inner tracker)
+      (.getSearchClient)
+      (.searchJql query)
+      (.claim)
+      (.getIssues)))
 
 
 (defn- private-get-jira-iterations-inner [tracker]

@@ -25,7 +25,7 @@
   (get-tracker-type [tracker] :jira)
   (get-project-name [tracker] tracker-project)
   (get-projects [tracker] (private-get-projects tracker tracker-name tracker-url))
-  (get-tasks [tracker] (list))
+  (get-tasks [tracker] (private-get-tasks tracker nil))
   (get-tasks [tracker query] (private-get-tasks tracker query))
   (get-tracker-url [tracker] tracker-url)
   (get-project-url [tracker] (str tracker-url "/projects/" tracker-project))
@@ -49,8 +49,8 @@
        (common/get-jira-projects-inner tracker)))
 
 
-(defn- private-get-tasks [tracker task-ids]
-  (task/get-jira-workitems tracker task-ids))
+(defn- private-get-tasks [tracker query]
+  (task/get-jira-workitems tracker query))
 
 
 (defn- private-get-iterations [tracker]

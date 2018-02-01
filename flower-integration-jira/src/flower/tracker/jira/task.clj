@@ -34,7 +34,7 @@
 ;; Private definitions
 ;;
 
-(defn- private-get-jira-workitems-before-map [tracker task-ids]
+(defn- private-get-jira-workitems-before-map [tracker query]
   (map #(map->JiraTrackerTask
          {:tracker tracker
           :task-id (.getKey %)
@@ -47,16 +47,18 @@
           :task-state (.getName (.getStatus %))
           :task-tags (.getLabels %)
           :task-description (.getDescription %)})
-       (if (empty? task-ids)
-         (list)
-         (common/get-jira-workitems-inner tracker task-ids))))
+       (if (string? query)
+         (common/get-jira-query-inner tracker query)
+         (if (empty? query)
+           (common/get-jira-query-inner tracker (str "project=\"" (proto/get-project-name tracker) "\""))
+           (common/get-jira-workitems-inner tracker query)))))
 
 
-(defn- private-get-jira-workitems [tracker task-ids]
+(defn- private-get-jira-workitems [tracker query]
   (map (get-in (proto/get-tracker-component tracker)
                [:context :tasks-map-function]
                (fn [task] task))
-       (private-get-jira-workitems-before-map tracker task-ids)))
+       (private-get-jira-workitems-before-map tracker query)))
 
 
 (defn- private-set-jira-workitem! [tracker-task]
@@ -69,6 +71,7 @@
                       (.getKey task-inner)
                       task-id)]
     (common/get-jira-workitems-inner-clear-cache!)
+    (common/get-jira-query-inner-clear-cache!)
     (get-jira-workitems-clear-cache!)
     (first (proto/get-tasks tracker [new-task-id]))))
 
