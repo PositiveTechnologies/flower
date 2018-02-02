@@ -10,7 +10,8 @@
                  [flower/flower-tracker "0.4.0-SNAPSHOT"]
                  [flower/flower-repository "0.4.0-SNAPSHOT"]
                  [flower/flower-messaging "0.4.0-SNAPSHOT"]
-                 [flower/flower-team "0.4.0-SNAPSHOT"]]
+                 [flower/flower-team "0.4.0-SNAPSHOT"]
+                 [flower/flower-utilities "0.4.0-SNAPSHOT"]]
   :aliases {"test" ["sub" "lint-and-test-all"]
             "bump-all" ["do" ["bump-version"] ["sub" "bump-version"]]}
   :sub ["flower-proto"
@@ -24,6 +25,7 @@
         "flower-repository"
         "flower-messaging"
         "flower-team"
+        "flower-utilities"
         "lein-template"]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})
