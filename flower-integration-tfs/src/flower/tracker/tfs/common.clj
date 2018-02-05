@@ -21,7 +21,8 @@
 ;;
 
 (defmacro with-tfs-auth [full-url query-params key & body]
-  `(let [response# (client/get ~full-url {:basic-auth [~'login ~'password]
+  `(let [response# (client/get ~full-url {:basic-auth [~'login (or ~'token
+                                                                   ~'password)]
                                           :content-type :json
                                           :accept :json
                                           :query-params ~query-params})
@@ -40,7 +41,8 @@
                          [:auth]
                          {})
            ~'login (get auth# :tfs-login)
-           ~'password (get auth# :tfs-password)]
+           ~'password (get auth# :tfs-password)
+           ~'token (get auth# :tfs-token)]
        (with-tfs-auth ~full-url ~query-params ~key
          ~@body))))
 

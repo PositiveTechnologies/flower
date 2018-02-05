@@ -32,15 +32,19 @@
        (def default-password# (flower.credentials/get-credentials :account :password))
        (def default-domain# (flower.credentials/get-credentials :account :domain))
        (def default-email# (flower.credentials/get-credentials :account :email))
+       (def default-token-github# (flower.credentials/get-credentials :token :github))
+       (def default-token-tfs# (flower.credentials/get-credentials :token :tfs))
        (def default-credentials# (into (flower.common/->ComponentAuth)
                                        {:github-login default-login#
                                         :github-password default-password#
+                                        :github-token default-token-github#
                                         :gitlab-login default-login#
                                         :gitlab-password default-password#
                                         :jira-login default-login#
                                         :jira-password default-password#
                                         :tfs-login (str default-domain# "\\" default-login#)
                                         :tfs-password default-password#
+                                        :tfs-token default-token-tfs#
                                         :message-box-username default-login#
                                         :message-box-password default-password#
                                         :message-box-domain default-domain#
