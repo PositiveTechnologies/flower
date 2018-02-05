@@ -162,7 +162,7 @@
   (flower-cycle-query @n)
   (flower-list-tasks))
 
-(org-add-link-type "flower" 'org-flower-open)
+(org-add-link-type "flower" 'flower-open)
 
 (defcustom flower-open-command 'flower-browse-task
   "The Emacs command to be used to display flower link."
