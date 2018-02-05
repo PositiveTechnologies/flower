@@ -90,6 +90,7 @@
                      {})
         login (get auth :tfs-login)
         password (get auth :tfs-password)
+        token (get auth :tfs-token)
         wit (get fields :System.WorkItemType "Task")
         operations (map (fn [[key value]] {:op :add
                                            :path (str "/fields/" (name key))
@@ -109,7 +110,8 @@
     (if (empty? operations)
       {:id task-id}
       (let [response (client/patch task-url
-                                   {:basic-auth [login password]
+                                   {:basic-auth [login (or token
+                                                           password)]
                                     :content-type :json-patch+json
                                     :accept :json
                                     :body operations-str})
