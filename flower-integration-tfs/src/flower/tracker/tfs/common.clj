@@ -59,9 +59,12 @@
 
 
 (defn- private-get-tfs-query-inner [tracker query-id]
-  (with-tfs-function tracker false ("/_apis/wit/wiql/" query-id) {} :workItems
-    (private-get-tfs-workitems-inner tracker
-                                     (map :id result))))
+  (if (re-find #"(?i)[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}" query-id)
+    (with-tfs-function tracker false ("/_apis/wit/wiql/" query-id) {} :workItems
+      (private-get-tfs-workitems-inner tracker
+                                       (map :id result)))
+    (with-tfs-function tracker true ("/_apis/wit/queries/" query-id) {} :id
+      (private-get-tfs-query-inner tracker result))))
 
 
 (defn- private-get-tfs-iterations-inner [tracker]
