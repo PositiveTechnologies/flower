@@ -10,7 +10,8 @@
 
 (defmethod print-method ComponentAuth [value ^java.io.Writer writer]
   (.write writer (str (reduce-kv (fn [map key value]
-                                   (assoc map key (if (.endsWith (str key) "password")
+                                   (assoc map key (if (or (.endsWith (str key) "password")
+                                                          (.endsWith (str key) "token"))
                                                     (apply str (repeat (count value) "*"))
                                                     value)))
                                  {}
