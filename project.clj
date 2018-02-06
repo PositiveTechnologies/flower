@@ -21,6 +21,7 @@
         "flower-integration-jira"
         "flower-integration-tfs"
         "flower-integration-exchange"
+        "flower-integration-slack"
         "flower-tracker"
         "flower-repository"
         "flower-messaging"

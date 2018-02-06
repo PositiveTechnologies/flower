@@ -1,7 +1,7 @@
-(ns flower.messaging.exchange.mailbox
+(ns flower.messaging.slack.mailbox
   (:require [flower.macros :as macros]
             [flower.messaging.proto :as proto]
-            [flower.messaging.exchange.message :as message]))
+            [flower.messaging.slack.message :as message]))
 
 
 ;;
@@ -15,7 +15,7 @@
 ;; Public definitions
 ;;
 
-(defrecord ExchangeMessagebox [msg-component folder-name]
+(defrecord SlackMessagebox [msg-component folder-name]
   proto/MessageboxProto
   (get-message-box-component [message-box] msg-component)
   (get-folder-name [message-box] folder-name)
@@ -27,4 +27,5 @@
 ;;
 
 (defn- private-search-messages [message-box params]
-  (message/search-exchange-messages message-box params))
+  (message/search-slack-messages message-box (merge {:folder-name (proto/get-folder-name message-box)}
+                                                    params)))
