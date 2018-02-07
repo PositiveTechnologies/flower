@@ -6,7 +6,7 @@
 ;; URL: https://github.com/PositiveTechnologies/flower
 ;; Keywords: hypermedia, outlines, tools, vc
 ;; Version: 0.4.0
-;; Package-Requires: ((emacs "24.4")(clomacs "0.0.2")(cider "0.14"))
+;; Package-Requires: ((emacs "24.4")(clomacs "0.0.3"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -26,26 +26,26 @@
 (require 'clomacs)
 (require 'org)
 
-(clomacs-defun flower-get-task-info-wrapper
+(clomacs-defun flower-get-task-info
                get-task-info
                :lib-name "flower"
                :namespace flower.util.tracker
                :doc "Get task info from task tracker")
 
-(clomacs-defun flower-get-task-url-wrapper
+(clomacs-defun flower-get-task-url
                get-task-url
                :lib-name "flower"
                :namespace flower.util.tracker
-               :doc "Get task info from task tracker")
+               :doc "Get task URL from task tracker")
 
-(clomacs-defun flower-get-tasks-wrapper
+(clomacs-defun flower-get-tasks
                get-tasks
                :lib-name "flower"
                :namespace flower.util.tracker
                :doc "Get tasks from task tracker")
 
 (defgroup flower nil
-  "Flower customization group."
+  "Flower customization group"
   :group 'org)
 
 (defcustom flower-tracker nil
@@ -72,19 +72,26 @@
                          (string :tag "Query"))))
 
 (defcustom flower-tracker-grouping nil
-  "Task default grouping"
+  "Task grouping"
   :group 'flower
   :type '(choice (const :tag "No grouping" nil)
                  (const :tag "Group by State" "task-state")
                  (const :tag "Group by Assignee" "task-assignee")))
 
+(defcustom flower-open-command 'flower-browse-task
+  "The Emacs command to be used to display 'flower:' links"
+  :group 'flower
+  :type '(choice (const :tag "Browse task" flower-browse-task)
+                 (const :tag "Show task info" flower-show-task-info)))
+
 (defvar flower-buffer "*flower*"
-  "Buffer name to display results")
+  "Buffer name to display list of tasks")
 
 (defvar flower-buffer-task "*flower-task*"
-  "Buffer name to display results")
+  "Buffer name to display contents of concrete task")
 
 (defun flower-show-buffer (text switch-to-org-mode switch-back)
+  "Pop to buffer specified by 'flower-buffer' variable and set buffer contents"
   (when text
     (setq text-stripped (replace-regexp-in-string "%" "%%" text))
     (let ((oldbuf (current-buffer)))
@@ -105,87 +112,99 @@
         (pop-to-buffer flower-buffer nil t)))))
 
 (defun flower-check-tracker ()
-  (if flower-tracker
-      t
-    (progn
-      (message "%s" "Please specify `flower-tracker`")
-      nil)))
+  "Check if variable 'flower-tracker' is specified"
+  (or flower-tracker
+      (progn
+        (message "%s" "Please specify `flower-tracker`")
+        nil)))
 
+;;;###autoload
 (defun flower-show-task-info (task-id)
   (interactive "sEnter task id: ")
   (message "Showing task: %s" task-id)
   (when (flower-check-tracker)
     (let ((flower-buffer flower-buffer-task)
           (nrepl-sync-request-timeout 30))
-      (flower-show-buffer (flower-get-task-info-wrapper flower-tracker
-                                                        flower-tracker-auth
-                                                        task-id)
+      (flower-show-buffer (flower-get-task-info flower-tracker
+                                                flower-tracker-auth
+                                                task-id)
                           t
                           t))))
 
+;;;###autoload
 (defun flower-browse-task (task-id)
+  "Browse task in external browser by task id"
   (interactive "sEnter task id: ")
   (message "Browsing task: %s" task-id)
   (when (flower-check-tracker)
     (let ((nrepl-sync-request-timeout 30))
-      (browse-url (flower-get-task-url-wrapper flower-tracker
-                                               flower-tracker-auth
-                                               task-id)))))
+      (browse-url (flower-get-task-url flower-tracker
+                                       flower-tracker-auth
+                                       task-id)))))
 
+;;;###autoload
 (defun flower-list-tasks ()
+  "Show list of tasks for task tracker specified by 'flower-tracker' variable"
   (interactive)
   (when (flower-check-tracker)
     (let ((nrepl-sync-request-timeout 30))
-      (flower-show-buffer (flower-get-tasks-wrapper flower-tracker
-                                                    flower-tracker-auth
-                                                    flower-tracker-query
-                                                    flower-tracker-grouping)
+      (flower-show-buffer (flower-get-tasks flower-tracker
+                                            flower-tracker-auth
+                                            flower-tracker-query
+                                            flower-tracker-grouping)
                           t
                           nil)
       (message "Listed all tasks for query: %s" flower-tracker-query))))
 
-(defun flower-cycle-query (@n)
+;;;###autoload
+(defun flower-cycle-query (query-index)
+  "Change current task tracker query"
   (interactive "p")
-  (let* (($values flower-tracker-queries)
-         ($index-before
+  (let* ((values flower-tracker-queries)
+         (index-before
           (if (get 'flower-cycle-query 'state)
               (get 'flower-cycle-query 'state)
             0))
-         ($index-after (% (+ $index-before (length $values) @n) (length $values)))
-         ($next-value (aref $values $index-after)))
-    (put 'flower-cycle-query 'state $index-after)
-    (setq flower-tracker-query $next-value)
-    (message "Flower tracker query set to: %s" $next-value)))
+         (index-after (% (+ index-before (length values) query-index)
+                         (length values)))
+         (next-value (aref values index-after)))
+    (put 'flower-cycle-query 'state index-after)
+    (setq flower-tracker-query next-value)
+    (message "Flower tracker query set to: %s" next-value)))
 
-(defun flower-cycle-query-and-go (@n)
+;;;###autoload
+(defun flower-cycle-query-and-go (query-index)
+  "Change current task tracker query and show list of tasks"
   (interactive "p")
-  (flower-cycle-query @n)
+  (flower-cycle-query query-index)
   (flower-list-tasks))
 
-(org-add-link-type "flower" 'flower-open)
-
-(defcustom flower-open-command 'flower-browse-task
-  "The Emacs command to be used to display flower link."
-  :group 'flower
-  :type '(choice (const flower-browse-task)
-                 (const flower-show-task-info)))
-
-(defun flower-open (task-id)
-  "Visit flower tracker task."
-  (funcall flower-open-command task-id))
-
+;;;###autoload
 (defun flower-org-show-task-info ()
+  "Show task info in buffer specified by 'flower-buffer-task' variable"
   (interactive)
   (let ((flower-open-command 'flower-show-task-info))
     (org-open-at-point)))
 
-(defun flower-org-mode-config ()
-  (local-set-key (kbd "M-.") 'flower-org-show-task-info)
-  (local-set-key (kbd "C-c F C") 'flower-cycle-query-and-go))
+;;;###autoload
+(defun flower-open (task-id)
+  "Visit flower tracker task"
+  (interactive "sEnter task id: ")
+  (funcall flower-open-command task-id))
 
-(add-hook 'org-mode-hook 'flower-org-mode-config)
+(org-add-link-type "flower" 'flower-open)
 
-(global-set-key (kbd "C-c F F") 'flower-list-tasks)
+(define-minor-mode flower-mode
+  "Flower mode for viewing issues from task trackers"
+  :init-value nil
+  :lighter " Flower"
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "M-.") 'flower-org-show-task-info)
+            (define-key map (kbd "M-n") 'flower-cycle-query-and-go)
+            map)
+  :group 'flower)
+
+(add-hook 'org-mode-hook 'flower-mode)
 
 (provide 'flower)
 
