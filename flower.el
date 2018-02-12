@@ -16,7 +16,7 @@
 ;;; Commentary:
 
 ;; flower provides simple interface to list tasks (issues) from Jira, TFS,
-;; Gitlab and Github.  It uses clomacs under the hood for integration with
+;; Gitlab and Github. It uses clomacs under the hood for integration with
 ;; Flower Clojure library.
 
 ;; See README.md for detailed description.
@@ -96,8 +96,8 @@ Argument CONTENTS New contents of the buffer.
 Argument SWITCH-TO-ORG-MODE Change buffer mode to ‘org-mode’.
 Argument SWITCH-BACK Switch current buffer back."
   (when contents
-    (setq contents-stripped (replace-regexp-in-string "%" "%%" contents))
-    (let ((oldbuf (current-buffer)))
+    (let ((oldbuf (current-buffer))
+          (contents-stripped (replace-regexp-in-string "%" "%%" contents)))
       (save-current-buffer
         (unless (get-buffer-window flower-buffer 0)
           (pop-to-buffer flower-buffer nil t))
@@ -108,7 +108,8 @@ Argument SWITCH-BACK Switch current buffer back."
             (setq-local org-support-shift-select t)
             (read-only-mode))
           (let ((inhibit-read-only t))
-            (setf (buffer-string) contents-stripped)
+            (erase-buffer)
+            (insert contents-stripped)
             (goto-char (point-min)))))
       (if switch-back
         (pop-to-buffer oldbuf nil t)
