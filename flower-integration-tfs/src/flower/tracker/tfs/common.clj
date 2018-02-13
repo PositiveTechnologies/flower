@@ -10,6 +10,7 @@
 ;;
 
 (macros/public-definition get-tfs-workitems-inner cached)
+(macros/public-definition get-tfs-workitems-partial-inner)
 (macros/public-definition get-tfs-query-inner cached)
 (macros/public-definition get-tfs-iterations-inner cached)
 (macros/public-definition get-tfs-capacity-inner cached)
@@ -37,14 +38,19 @@
   (let [full-url (if project?
                    `(str (proto/get-project-url ~tracker) ~@url)
                    `(str (proto/get-tracker-url ~tracker) ~@url))]
-    `(let [auth# (get-in (proto/get-tracker-component ~tracker)
-                         [:auth]
-                         {})
+    `(let [tracker-component# (proto/get-tracker-component ~tracker)
+           auth# (get-in tracker-component# [:auth] {})
+           context# (get-in tracker-component# [:context] {})
+           skip-on-exception# (get context# :skip-on-exception true)
            ~'login (get auth# :tfs-login)
            ~'password (get auth# :tfs-password)
            ~'token (get auth# :tfs-token)]
-       (with-tfs-auth ~full-url ~query-params ~key
-         ~@body))))
+       (try
+         (with-tfs-auth ~full-url ~query-params ~key
+           ~@body)
+         (catch Exception e#
+           (when-not skip-on-exception#
+             (throw e#)))))))
 
 
 ;;
@@ -58,11 +64,23 @@
         result))))
 
 
+(defn- private-get-tfs-workitems-partial-inner [tracker task-ids]
+  (let [partitioned-ids (partition-all 10 task-ids)]
+    (apply concat
+           (for [patitioned-task-ids partitioned-ids
+                 :let [workitems (get-tfs-workitems-inner tracker patitioned-task-ids)]]
+             (if (< (count workitems)
+                    (count patitioned-task-ids))
+               (for [task-id patitioned-task-ids]
+                 (first (get-tfs-workitems-inner tracker [task-id])))
+               workitems)))))
+
+
 (defn- private-get-tfs-query-inner [tracker query-id]
   (if (re-find #"(?i)[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}" query-id)
     (with-tfs-function tracker false ("/_apis/wit/wiql/" query-id) {} :workItems
-      (private-get-tfs-workitems-inner tracker
-                                       (map :id result)))
+      (private-get-tfs-workitems-partial-inner tracker
+                                               (map :id result)))
     (with-tfs-function tracker true ("/_apis/wit/queries/" query-id) {} :id
       (private-get-tfs-query-inner tracker result))))
 
