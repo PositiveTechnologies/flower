@@ -44,6 +44,12 @@
          [tracker-url]))
 
 
+(defn- replace-title-for-org-mode-links [title]
+  (-> title
+      (clojure.string/replace #"\[" "{")
+      (clojure.string/replace #"\]" "}")))
+
+
 (defn- get-task-info-str [task long-version]
   (let [task-id (get task :task-id)
         task-url (when task
@@ -51,7 +57,7 @@
     (when task-id
       (let [task-title (str (get task :task-type "Task") " "
                             task-id ": "
-                            (get task :task-title "?"))
+                            (replace-title-for-org-mode-links (get task :task-title "?")))
             task-assignee (get task :task-assignee "?")
             task-state (get task :task-state "?")]
         (str (if task-url
