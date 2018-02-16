@@ -15,8 +15,8 @@
 ;; Public definitions
 ;;
 
-(macros/public-definition get-jira-conn-inner cached)
-(macros/public-definition get-jira-project-inner cached)
+(macros/public-definition get-jira-conn-inner always-cached)
+(macros/public-definition get-jira-project-inner always-cached)
 (macros/public-definition get-jira-projects-inner cached)
 (macros/public-definition get-jira-issue-type-inner cached)
 (macros/public-definition get-jira-issue-types-inner cached)

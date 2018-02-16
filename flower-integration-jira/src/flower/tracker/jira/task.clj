@@ -1,9 +1,10 @@
 (ns flower.tracker.jira.task
   (:require [clojure.data :as data]
             [clojure.set :as set]
+            [flower.common :as common]
             [flower.macros :as macros]
             [flower.tracker.proto :as proto]
-            [flower.tracker.jira.common :as common]))
+            [flower.tracker.jira.common :as jira.common]))
 
 ;;
 ;; Private declarations
@@ -48,10 +49,10 @@
           :task-tags (.getLabels %)
           :task-description (.getDescription %)})
        (if (string? query)
-         (common/get-jira-query-inner tracker query)
+         (jira.common/get-jira-query-inner tracker query)
          (if (empty? query)
-           (common/get-jira-query-inner tracker (str "project=\"" (proto/get-project-name tracker) "\""))
-           (common/get-jira-workitems-inner tracker query)))))
+           (jira.common/get-jira-query-inner tracker (str "project=\"" (proto/get-project-name tracker) "\""))
+           (jira.common/get-jira-workitems-inner tracker query)))))
 
 
 (defn- private-get-jira-workitems [tracker query]
@@ -66,13 +67,14 @@
         task-id (proto/get-task-id tracker-task)
         old-workitem (first (proto/get-tasks tracker [task-id]))
         fields (second (data/diff old-workitem tracker-task))
-        task-inner (common/set-jira-workitem-inner! tracker task-id fields)
+        task-inner (jira.common/set-jira-workitem-inner! tracker task-id fields)
         new-task-id (if task-inner
                       (.getKey task-inner)
                       task-id)]
-    (common/get-jira-workitems-inner-clear-cache!)
-    (common/get-jira-query-inner-clear-cache!)
-    (get-jira-workitems-clear-cache!)
+    (when common/*behavior-implicit-cache-cleaning*
+      (jira.common/get-jira-workitems-inner-clear-cache!)
+      (jira.common/get-jira-query-inner-clear-cache!)
+      (get-jira-workitems-clear-cache!))
     (first (proto/get-tasks tracker [new-task-id]))))
 
 

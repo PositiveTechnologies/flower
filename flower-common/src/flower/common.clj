@@ -19,6 +19,8 @@
 
 
 (def ^:dynamic *component-auth* (ComponentAuth.))
-
-
 (def ^:dynamic *component-context* {})
+
+
+(def ^:dynamic *behavior-implicit-cache* true)
+(def ^:dynamic *behavior-implicit-cache-cleaning* true)

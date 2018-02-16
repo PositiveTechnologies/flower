@@ -10,8 +10,8 @@
 ;; Public definitions
 ;;
 
-(macros/public-definition get-gitlab-conn-inner cached)
-(macros/public-definition get-gitlab-project-inner cached)
+(macros/public-definition get-gitlab-conn-inner always-cached)
+(macros/public-definition get-gitlab-project-inner always-cached)
 (macros/public-definition get-gitlab-projects-inner cached)
 (macros/public-definition get-gitlab-workitems-inner cached)
 (macros/public-definition get-gitlab-iterations-inner cached)

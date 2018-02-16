@@ -2,9 +2,10 @@
   (:require [clojure.data :as data]
             [clojure.set :as set]
             [clojure.string :as string]
+            [flower.common :as common]
             [flower.macros :as macros]
             [flower.tracker.proto :as proto]
-            [flower.tracker.tfs.common :as common]))
+            [flower.tracker.tfs.common :as tfs.common]))
 
 ;;
 ;; Private declarations
@@ -48,8 +49,8 @@
                                (string/split (get fields :System.Tags "") #"; "))
             :task-description (get fields :System.Description)}))
        (if (string? query)
-         (common/get-tfs-query-inner tracker query)
-         (common/get-tfs-workitems-inner tracker query))))
+         (tfs.common/get-tfs-query-inner tracker query)
+         (tfs.common/get-tfs-workitems-inner tracker query))))
 
 
 (defn- private-get-tfs-workitems [tracker query]
@@ -83,9 +84,10 @@
                                       :task-tags :System.Tags
                                       :task-description :System.Description})
         fields-without-tracker (dissoc fields :tracker)
-        new-task-id (get (common/set-tfs-workitem-inner! tracker task-id fields-without-tracker) :id)]
-    (common/get-tfs-workitems-inner-clear-cache!)
-    (get-tfs-workitems-clear-cache!)
+        new-task-id (get (tfs.common/set-tfs-workitem-inner! tracker task-id fields-without-tracker) :id)]
+    (when common/*behavior-implicit-cache-cleaning*
+      (tfs.common/get-tfs-workitems-inner-clear-cache!)
+      (get-tfs-workitems-clear-cache!))
     (first (proto/get-tasks tracker [new-task-id]))))
 
 

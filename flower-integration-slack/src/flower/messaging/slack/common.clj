@@ -10,7 +10,7 @@
 ;; Public definitions
 ;;
 
-(macros/public-definition get-message-box-conn-inner cached)
+(macros/public-definition get-message-box-conn-inner always-cached)
 (macros/public-definition get-slack-groups-inner cached)
 (macros/public-definition get-slack-channels-inner cached)
 (macros/public-definition is-slack-group-inner cached)

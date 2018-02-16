@@ -13,8 +13,8 @@
 ;; Public definitions
 ;;
 
-(macros/public-definition get-github-conn-inner cached)
-(macros/public-definition get-github-project-inner cached)
+(macros/public-definition get-github-conn-inner always-cached)
+(macros/public-definition get-github-project-inner always-cached)
 (macros/public-definition get-github-projects-inner cached)
 (macros/public-definition get-github-pull-requests-inner cached)
 (macros/public-definition get-github-pull-request-comments-inner cached)
