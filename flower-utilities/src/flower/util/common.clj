@@ -10,7 +10,9 @@
     (.outputSettings document not-pretty)
     (.append (.select document "br") "\\n")
     (.prepend (.select document "p") "\\n\\n")
-    (Jsoup/clean (.replaceAll (.html document) "\\\\n" "\n")
+    (Jsoup/clean (-> (.html document)
+                     (.replaceAll "\\\\n" "\n")
+                     (.replaceAll "\\r" ""))
                  ""
                  (Whitelist/none)
                  not-pretty)))

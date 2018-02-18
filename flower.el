@@ -16,7 +16,7 @@
 ;;; Commentary:
 
 ;; flower provides simple interface to list tasks (issues) from Jira, TFS,
-;; Gitlab and Github. It uses clomacs under the hood for integration with
+;; Gitlab and Github using clomacs under the hood for integration with
 ;; Flower Clojure library.
 
 ;; See README.md for detailed description.
@@ -46,7 +46,7 @@
 
 (defgroup flower nil
   "Flower customization group."
-  :group 'org)
+  :group 'applications)
 
 (defcustom flower-tracker nil
   "Task tracker URL."
@@ -66,10 +66,14 @@
                  (string :tag "Query")))
 
 (defcustom flower-tracker-queries [nil]
-  "All tracker default queries."
+  "All trackers and queries."
   :group 'flower
-  :type '(vector (choice (const :tag "Default" nil)
-                         (string :tag "Query"))))
+  :type '(vector (list (choice (string :tag "Tracker URL")
+                               (const :tag "Same tracker" nil))
+                       (choice (const :tag "No authentication" nil)
+                               (const :tag "Default authentication" t))
+                       (choice (const :tag "Default query" nil)
+                               (string :tag "Query")))))
 
 (defcustom flower-tracker-grouping nil
   "Task grouping."
@@ -93,7 +97,7 @@
 (defun flower-show-buffer (contents switch-to-org-mode switch-back)
   "Pop to buffer specified by 'flower-buffer' variable and set buffer text.
 Argument CONTENTS New contents of the buffer.
-Argument SWITCH-TO-ORG-MODE Change buffer mode to ‘org-mode’.
+Argument SWITCH-TO-ORG-MODE Change buffer mode using function ‘org-mode’.
 Argument SWITCH-BACK Switch current buffer back."
   (when contents
     (let ((oldbuf (current-buffer))
@@ -104,6 +108,7 @@ Argument SWITCH-BACK Switch current buffer back."
         (with-current-buffer flower-buffer
           (when switch-to-org-mode
             (org-mode)
+            (flower-mode)
             (setq-local org-return-follows-link t)
             (setq-local org-support-shift-select t)
             (read-only-mode))
@@ -118,9 +123,12 @@ Argument SWITCH-BACK Switch current buffer back."
 (defun flower-check-tracker ()
   "Check if variable 'flower-tracker' is specified."
   (or flower-tracker
-      (progn
-        (message "%s" "Please specify `flower-tracker`")
-        nil)))
+      (if (and (> (length flower-tracker-queries) 0)
+               (aref flower-tracker-queries 0))
+          (flower-cycle-query 0)
+        (progn
+          (message "%s" "Please specify `flower-tracker` or `flower-tracker-queries`")
+          nil))))
 
 ;;;###autoload
 (defun flower-show-task-info (task-id)
@@ -161,7 +169,8 @@ Argument TASK-ID Task identifier."
                                             flower-tracker-grouping)
                           t
                           nil)
-      (message "Listed all tasks for query: %s" flower-tracker-query))))
+      (message "Listed all tasks for: %s -> %s" flower-tracker (or flower-tracker-query
+                                                                   "Default query")))))
 
 ;;;###autoload
 (defun flower-cycle-query (query-index)
@@ -177,7 +186,10 @@ Argument QUERY-INDEX Index of the query."
                          (length values)))
          (next-value (aref values index-after)))
     (put 'flower-cycle-query 'state index-after)
-    (setq flower-tracker-query next-value)
+    (when (first next-value)
+      (setq flower-tracker (first next-value))
+      (setq flower-tracker-auth (second next-value)))
+    (setq flower-tracker-query (third next-value))
     (message "Flower tracker query set to: %s" next-value)))
 
 ;;;###autoload
@@ -213,8 +225,6 @@ Argument TASK-ID Task identifier."
             (define-key map (kbd "M-n") 'flower-cycle-query-and-go)
             map)
   :group 'flower)
-
-(add-hook 'org-mode-hook 'flower-mode)
 
 (provide 'flower)
 
