@@ -15,10 +15,6 @@
                  [com.stuartsierra/component "0.3.2"]
                  [com.cemerick/url "0.1.1"]
                  [flower/flower-common "0.4.0-SNAPSHOT"]
-                 [flower/flower-proto "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-github "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-gitlab "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-jira "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-tfs "0.4.0-SNAPSHOT"]]
+                 [flower/flower-proto "0.4.0-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})
