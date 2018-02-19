@@ -1,9 +1,8 @@
 (ns flower.messaging.core
   (:require [com.stuartsierra.component :as component]
             [flower.common :as common]
-            [flower.messaging.proto :as proto]
-            [flower.messaging.exchange.mailbox :as exchange.mailbox]
-            [flower.messaging.slack.mailbox :as slack.mailbox]))
+            [flower.resolver :as resolver]
+            [flower.messaging.proto :as proto]))
 
 
 ;;
@@ -21,9 +20,7 @@
 (defn messaging [messaging-component messaging]
   (into {}
         (map (fn [[messaging-name {messaging-type :messaging-type}]]
-               [messaging-name [((case messaging-type
-                                   :exchange exchange.mailbox/map->ExchangeMessagebox
-                                   :slack slack.mailbox/map->SlackMessagebox)
+               [messaging-name [((resolver/resolve-implementation messaging-type :messaging)
                                  {:msg-component messaging-component
                                   :folder-name (get-in messaging-component [:context :folder-name])})]])
              messaging)))
