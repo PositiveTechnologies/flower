@@ -4,7 +4,8 @@
             [cemerick.pomegranate.aether :as aether]
             [trptcolin.versioneer.core :as versioneer.core]
             [flower.common :as common]
-            [flower.macros :as macros]))
+            [flower.macros :as macros])
+  (:import (clojure.lang DynamicClassLoader)))
 
 ;;
 ;; Public definitions
@@ -17,6 +18,7 @@
 (macros/public-definition get-require-symbol always-cached)
 (macros/public-definition get-implementation-name-component always-cached)
 (macros/public-definition get-implementation-symbol always-cached)
+(macros/public-definition load-dependency)
 (macros/public-definition resolve-implementation always-cached)
 
 
@@ -64,6 +66,22 @@
                implementation-name-component)))
 
 
+(defn private-ensure-dynamic-classloader []
+  (let [thread (Thread/currentThread)
+        cl (.getContextClassLoader thread)]
+    (when-not (instance? DynamicClassLoader cl)
+      (.setContextClassLoader thread (DynamicClassLoader. cl)))
+    cl))
+
+
+(defn- private-load-dependency [dependency-symbol]
+  (private-ensure-dynamic-classloader)
+  (cemerick.pomegranate/add-dependencies :coordinates [[dependency-symbol (get-flower-version)]]
+                                         :repositories (merge cemerick.pomegranate.aether/maven-central
+                                                              {"clojars" "https://clojars.org/repo"}
+                                                              common/*resolver-additional-repositories*)))
+
+
 (defn- private-resolve-implementation [integration-name integration-type]
   (let [integration-name (name integration-name)
         integration-type (name integration-type)
@@ -76,9 +94,9 @@
         old-err-stream (System/err)]
     (when common/*behavior-suppress-warnings-on-loading-libraries*
       (System/setErr (java.io.PrintStream. (proxy [java.io.OutputStream] [] (write [& _])))))
-    (when (cemerick.pomegranate/add-dependencies :coordinates [[dependency-symbol (get-flower-version)]]
-                                                 :repositories (merge cemerick.pomegranate.aether/maven-central
-                                                                      {"clojars" "https://clojars.org/repo"}))
-      (require [require-symbol])
+    (load-dependency dependency-symbol)
+    (require require-symbol)
+    (let [temp-name (gensym)]
+      (refer require-symbol :rename {implementation-symbol temp-name})
       (System/setErr old-err-stream)
-      (resolve (symbol (str (name require-symbol) "/" implementation-symbol))))))
+      (resolve temp-name))))

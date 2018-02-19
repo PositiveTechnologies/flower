@@ -25,3 +25,6 @@
 (def ^:dynamic *behavior-implicit-cache* true)
 (def ^:dynamic *behavior-implicit-cache-cleaning* true)
 (def ^:dynamic *behavior-suppress-warnings-on-loading-libraries* true)
+
+
+(def ^:dynamic *resolver-additional-repositories* {})
