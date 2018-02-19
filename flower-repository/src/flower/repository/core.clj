@@ -4,9 +4,8 @@
             [cemerick.url :as url]
             [tesser.core :as tesser]
             [flower.common :as common]
-            [flower.repository.proto :as proto]
-            [flower.repository.gitlab.repo :as gitlab.repo]
-            [flower.repository.github.repo :as github.repo]))
+            [flower.resolver :as resolver]
+            [flower.repository.proto :as proto]))
 
 
 ;;
@@ -35,9 +34,7 @@
                               repo-url :repo-url
                               repo-projects :repo-projects}]]
                (let [repo-projects-list (or repo-projects (list nil))]
-                 [repo-name (map #((case repo-type
-                                     :gitlab gitlab.repo/map->GitlabRepository
-                                     :github github.repo/map->GithubRepository)
+                 [repo-name (map #((resolver/resolve-implementation repo-type :repository)
                                    {:repository-component repository-component
                                     :repo-name repo-name
                                     :repo-url repo-url

@@ -13,6 +13,8 @@
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.memoize "0.5.9"]
-                 [cprop "0.1.11"]]
+                 [com.cemerick/pomegranate "1.0.0"]
+                 [cprop "0.1.11"]
+                 [trptcolin/versioneer "0.2.0"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})
