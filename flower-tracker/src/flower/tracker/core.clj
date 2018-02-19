@@ -3,8 +3,15 @@
             [com.stuartsierra.component :as component]
             [cemerick.url :as url]
             [flower.common :as common]
-            [flower.resolver :as resolver]
-            [flower.tracker.proto :as proto]))
+            [flower.tracker.proto :as proto]
+            [flower.tracker.github.tracker :as github.tracker]
+            [flower.tracker.github.task :as github.task]
+            [flower.tracker.gitlab.tracker :as gitlab.tracker]
+            [flower.tracker.gitlab.task :as gitlab.task]
+            [flower.tracker.jira.tracker :as jira.tracker]
+            [flower.tracker.jira.task :as jira.task]
+            [flower.tracker.tfs.tracker :as tfs.tracker]
+            [flower.tracker.tfs.task :as tfs.task]))
 
 
 ;;
@@ -24,14 +31,17 @@
         (map (fn [[tracker-name {tracker-type :tracker-type
                                  tracker-url :tracker-url
                                  tracker-projects :tracker-projects}]]
-               (let [tracker-projects-list (or tracker-projects (list nil))
-                     tracker-pair [tracker-name (map #((resolver/resolve-implementation tracker-type :tracker)
-                                                       {:tracker-component tracker-component
-                                                        :tracker-name tracker-name
-                                                        :tracker-url tracker-url
-                                                        :tracker-project %})
-                                                     tracker-projects-list)]]
-                 tracker-pair))
+               (let [tracker-projects-list (or tracker-projects (list nil))]
+                 [tracker-name (map #((case tracker-type
+                                        :tfs tfs.tracker/map->TFSTracker
+                                        :gitlab gitlab.tracker/map->GitlabTracker
+                                        :jira jira.tracker/map->JiraTracker
+                                        :github github.tracker/map->GithubTracker)
+                                      {:tracker-component tracker-component
+                                       :tracker-name tracker-name
+                                       :tracker-url tracker-url
+                                       :tracker-project %})
+                                    tracker-projects-list)]))
              trackers)))
 
 
@@ -97,5 +107,9 @@
 (defn task [task-data]
   (let [tracker (get task-data :tracker)
         tracker-type (proto/get-tracker-type tracker)
-        task-function (resolver/resolve-implementation tracker-type :task)]
+        task-function (case tracker-type
+                        :tfs tfs.task/map->TFSTrackerTask
+                        :gitlab gitlab.task/map->GitlabTrackerTask
+                        :jira jira.task/map->JiraTrackerTask
+                        :github github.task/map->GithubTrackerTask)]
     (task-function task-data)))

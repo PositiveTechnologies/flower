@@ -14,6 +14,8 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [com.stuartsierra/component "0.3.2"]
                  [flower/flower-common "0.4.0-SNAPSHOT"]
-                 [flower/flower-proto "0.4.0-SNAPSHOT"]]
+                 [flower/flower-proto "0.4.0-SNAPSHOT"]
+                 [flower/flower-integration-exchange "0.4.0-SNAPSHOT"]
+                 [flower/flower-integration-slack "0.4.0-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})
