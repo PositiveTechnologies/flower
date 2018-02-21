@@ -74,12 +74,14 @@
     cl))
 
 
-(defn- private-load-dependency [dependency-symbol]
-  (private-ensure-dynamic-classloader)
-  (cemerick.pomegranate/add-dependencies :coordinates [[dependency-symbol (get-flower-version)]]
-                                         :repositories (merge cemerick.pomegranate.aether/maven-central
-                                                              {"clojars" "https://clojars.org/repo"}
-                                                              common/*resolver-additional-repositories*)))
+(defn- private-load-dependency
+  ([dependency-symbol] (private-load-dependency dependency-symbol (get-flower-version)))
+  ([dependency-symbol dependency-version]
+   (private-ensure-dynamic-classloader)
+   (cemerick.pomegranate/add-dependencies :coordinates [[dependency-symbol dependency-version]]
+                                          :repositories (merge cemerick.pomegranate.aether/maven-central
+                                                               {"clojars" "https://clojars.org/repo"}
+                                                               common/*resolver-additional-repositories*))))
 
 
 (defn- private-resolve-implementation [integration-name integration-type]
@@ -91,12 +93,13 @@
         require-symbol (get-require-symbol require-name-type integration-name require-name-subtype)
         implementation-name-component (get-implementation-name-component integration-type)
         implementation-symbol (get-implementation-symbol integration-name implementation-name-component)
-        old-err-stream (System/err)]
-    (when common/*behavior-suppress-warnings-on-loading-libraries*
-      (System/setErr (java.io.PrintStream. (proxy [java.io.OutputStream] [] (write [& _])))))
-    (load-dependency dependency-symbol)
-    (require require-symbol)
-    (let [temp-name (gensym)]
-      (refer require-symbol :rename {implementation-symbol temp-name})
-      (System/setErr old-err-stream)
-      (resolve temp-name))))
+        old-err-stream (System/err)
+        resolved-symbol (resolve implementation-symbol)]
+    (or resolved-symbol
+        (do (when common/*behavior-suppress-warnings-on-loading-libraries*
+              (System/setErr (java.io.PrintStream. (proxy [java.io.OutputStream] [] (write [& _])))))
+            (load-dependency dependency-symbol)
+            (require require-symbol)
+            (refer require-symbol :only [implementation-symbol])
+            (System/setErr old-err-stream)
+            (resolve implementation-symbol)))))

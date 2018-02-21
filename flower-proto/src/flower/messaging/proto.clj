@@ -8,7 +8,12 @@
 (defprotocol MessageboxProto
   (get-message-box-component [message-box])
   (get-folder-name [message-box])
-  (search-messages [message-box params]))
+  (search-messages
+    [message-box]
+    [message-box params])
+  (subscribe
+    [message-box]
+    [message-box params]))
 
 
 (defprotocol MessageProto

@@ -43,6 +43,7 @@
        (def default-token-github# (flower.credentials/get-credentials :token :github))
        (def default-token-tfs# (flower.credentials/get-credentials :token :tfs))
        (def default-token-slack# (flower.credentials/get-credentials :token :slack))
+       (def default-token-slack-bot# (flower.credentials/get-credentials :token :slack-bot))
        (def default-credentials# (into (flower.common/->ComponentAuth)
                                        {:github-login default-login#
                                         :github-password default-password#
@@ -55,11 +56,18 @@
                                         :tfs-password default-password#
                                         :tfs-token default-token-tfs#
                                         :slack-token default-token-slack#
+                                        :slack-bot-token default-token-slack-bot#
                                         :message-box-username default-login#
                                         :message-box-password default-password#
                                         :message-box-domain default-domain#
                                         :message-box-email default-email#}))
        (binding [flower.common/*component-auth* default-credentials#]
+         ~@body)))
+
+
+(defmacro with-component-context [component-context & body]
+  `(do (require 'flower.common)
+       (binding [flower.common/*component-context* ~component-context]
          ~@body)))
 
 

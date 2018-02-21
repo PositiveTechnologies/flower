@@ -1,12 +1,16 @@
 (ns flower.messaging.exchange.common
-  (:require [flower.macros :as macros]
-            [flower.messaging.proto :as proto])
+  (:require [clojure.core.async :as async]
+            [flower.macros :as macros]
+            [flower.messaging.proto :as proto]
+            [flower.messaging.exchange.async :as exchange.async])
   (:import (microsoft.exchange.webservices.data.core ExchangeService PropertySet)
+           (microsoft.exchange.webservices.data.core.enumeration.notification EventType)
            (microsoft.exchange.webservices.data.core.enumeration.property WellKnownFolderName)
            (microsoft.exchange.webservices.data.core.enumeration.search LogicalOperator)
            (microsoft.exchange.webservices.data.core.service.item EmailMessage)
            (microsoft.exchange.webservices.data.core.service.schema ItemSchema)
            (microsoft.exchange.webservices.data.credential WebCredentials)
+           (microsoft.exchange.webservices.data.notification StreamingSubscriptionConnection)
            (microsoft.exchange.webservices.data.property.complex EmailAddress
                                                                  MessageBody)
            (microsoft.exchange.webservices.data.search ItemView)
@@ -21,6 +25,7 @@
 (macros/public-definition get-message-box-conn-inner always-cached)
 (macros/public-definition search-exchange-messages-inner cached)
 (macros/public-definition send-exchange-message-inner!)
+(macros/public-definition subscribe-inner)
 
 
 ;;
@@ -100,3 +105,29 @@
                  (doto view
                    (.setOffset newoffset))
                  newresults))))))
+
+
+(defn- private-subscribe-inner [conn-inner params channel]
+  (let [{load-body :load-body} params
+        channel-inner (async/chan)
+        subscription (.subscribeToStreamingNotificationsOnAllFolders conn-inner
+                                                                     (into-array EventType
+                                                                                 [EventType/NewMail]))
+        streaming-connection (StreamingSubscriptionConnection. conn-inner 30)]
+    (future (let [streaming-connection' (exchange.async/connect-to-exchange-streaming conn-inner
+                                                                                      streaming-connection
+                                                                                      subscription
+                                                                                      load-body
+                                                                                      channel
+                                                                                      channel-inner)]
+              (async/go-loop []
+                (if (or (.closed? channel-inner)
+                        (.closed? channel))
+                  (do (doto streaming-connection
+                        .close
+                        .clearNotificationEvent
+                        .clearSubscriptionError
+                        .clearDisconnect)
+                      (.unsubscribe subscription))
+                  (recur)))))
+    channel-inner))

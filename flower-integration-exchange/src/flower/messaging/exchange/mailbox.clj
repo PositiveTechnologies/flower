@@ -9,6 +9,7 @@
 ;;
 
 (declare private-search-messages)
+(declare private-subscribe)
 
 
 ;;
@@ -19,7 +20,10 @@
   proto/MessageboxProto
   (get-message-box-component [message-box] msg-component)
   (get-folder-name [message-box] folder-name)
-  (search-messages [message-box params] (private-search-messages message-box params)))
+  (search-messages [message-box] (private-search-messages message-box {}))
+  (search-messages [message-box params] (private-search-messages message-box params))
+  (subscribe [message-box] (private-subscribe message-box {}))
+  (subscribe [message-box params] (private-subscribe message-box params)))
 
 
 ;;
@@ -28,3 +32,7 @@
 
 (defn- private-search-messages [message-box params]
   (message/search-exchange-messages message-box params))
+
+
+(defn- private-subscribe [message-box params]
+  (message/subscribe message-box params))

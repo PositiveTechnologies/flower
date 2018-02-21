@@ -1,5 +1,6 @@
 (ns flower.messaging.slack.message
-  (:require [flower.macros :as macros]
+  (:require [clojure.core.async :as async]
+            [flower.macros :as macros]
             [flower.messaging.proto :as proto]
             [flower.messaging.slack.common :as common]))
 
@@ -9,6 +10,7 @@
 ;;
 
 (declare private-search-slack-messages-inner)
+(declare private-subscribe-inner)
 
 
 ;;
@@ -26,19 +28,28 @@
 
 
 (macros/public-definition search-slack-messages cached)
+(macros/public-definition subscribe)
 
 ;;
 ;; Private definitions
 ;;
 
+(defn- private-message-from-inner [message-box load-body message-inner]
+  (map->SlackMessage {:msg-box message-box
+                      :msg-source (get message-inner :username)
+                      :msg-recipients (list (get message-inner :channelname))
+                      :msg-title (get message-inner :text "")
+                      :msg-body (if load-body
+                                  (get message-inner :text "")
+                                  "")}))
+
+
 (defn- private-search-slack-messages-before-map [message-box params]
   (let [{load-body :load-body
          folder-name :folder-name} params]
-    (map #(map->SlackMessage {:msg-box message-box
-                              :msg-source (get % :username)
-                              :msg-recipients (list folder-name)
-                              :msg-title (get % :text)
-                              :msg-body ""})
+    (map #(private-message-from-inner message-box
+                                      load-body
+                                      (merge % {:channelname folder-name}))
          (private-search-slack-messages-inner message-box params))))
 
 
@@ -47,6 +58,30 @@
                [:context :messages-map-function]
                (fn [message] message))
        (private-search-slack-messages-before-map message-box params)))
+
+
+(defn- private-subscribe [message-box params]
+  (let [{load-body :load-body
+         folder-name :folder-name} params
+        conn-inner (common/get-message-box-conn-inner message-box true)
+        channel (async/chan)
+        channel-inner (common/subscribe-inner conn-inner params channel)]
+    (if channel-inner
+      (do (async/go-loop []
+            (if (or (.closed? channel-inner)
+                    (.closed? channel))
+              (do (async/close! channel-inner)
+                  (async/close! channel))
+              (let [message-inner (async/<! channel-inner)
+                    message (when message-inner
+                              (private-message-from-inner message-box
+                                                          folder-name
+                                                          message-inner))]
+                (when message
+                  (async/>! channel message)
+                  (recur))))))
+      (async/close! channel))
+    channel))
 
 
 (defn- private-search-slack-messages-inner [message-box params]
