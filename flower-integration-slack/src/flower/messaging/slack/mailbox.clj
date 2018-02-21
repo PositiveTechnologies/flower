@@ -16,7 +16,7 @@
 ;; Public definitions
 ;;
 
-(defrecord SlackMessagebox [msg-component folder-name]
+(defrecord SlackMessagebox [msg-component msg-name folder-name]
   proto/MessageboxProto
   (get-message-box-component [message-box] msg-component)
   (get-folder-name [message-box] folder-name)

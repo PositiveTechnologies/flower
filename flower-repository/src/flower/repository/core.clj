@@ -48,10 +48,22 @@
 
 
 (def ^:dynamic *repository-type* nil)
+(def ^:dynamic *repository-url* nil)
+(def ^:dynamic *repository-project* nil)
 
 
 (defmacro with-repository-type [repository-type & body]
   `(binding [flower.repository.core/*repository-type* ~repository-type]
+     ~@body))
+
+
+(defmacro with-repository-url [repository-url & body]
+  `(binding [flower.repository.core/*repository-url* ~repository-url]
+     ~@body))
+
+
+(defmacro with-repository-project [repository-project & body]
+  `(binding [flower.repository.core/*repository-project* ~repository-project]
      ~@body))
 
 
@@ -68,16 +80,28 @@
         repository-path-last (last repository-path-components)]
     (cond (or (= repository-domain "github.com")
               (= *repository-type* :github)) {:repo-type :github
-                                              :repo-url (str (assoc repository-url
-                                                                    :path repository-path-first))
-                                              :repo-projects [repository-path-second]
-                                              :repo-name (keyword (str "github-" repository-domain "-" repository-path-second))}
+                                              :repo-url (or *repository-url*
+                                                            (str (assoc repository-url
+                                                                        :path repository-path-first)))
+                                              :repo-projects [(or *repository-project* repository-path-second)]
+                                              :repo-name (keyword (str "github-" repository-domain "-" (or *repository-project*
+                                                                                                           repository-path-second)))}
           (or (.contains repository-domain "gitlab")
               (= *repository-type* :gitlab)) {:repo-type :gitlab
-                                              :repo-url (str (assoc repository-url
-                                                                    :path ""))
-                                              :repo-projects [repository-path-second]
-                                              :repo-name (keyword (str "gitlab-" repository-domain "-" repository-path-second))})))
+                                              :repo-url (or *repository-url*
+                                                            (str (assoc repository-url
+                                                                        :path "")))
+                                              :repo-projects [(or *repository-project* repository-path-second)]
+                                              :repo-name (keyword (str "gitlab-" repository-domain "-" (or *repository-project*
+                                                                                                           repository-path-second)))}
+          :else (merge {:repo-type *repository-type*
+                        :repo-name (keyword (str (name *repository-type*) "-" repository-domain (when *repository-project*
+                                                                                                  (str "-" *repository-project*))))
+                        :repo-url (or *repository-url*
+                                      (str (assoc repository-url
+                                                  :path "")))}
+                       (when *repository-project*
+                         {:repo-projects [*repository-project*]})))))
 
 
 (defn get-repository [repository-full-url]
