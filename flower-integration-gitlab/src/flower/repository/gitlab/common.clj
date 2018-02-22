@@ -30,8 +30,11 @@
                                    [:auth]
                                    {})
                       login (get auth :gitlab-login)
-                      password (get auth :gitlab-password)]
-                  (private-get-gitlab-conn-inner repository login password)))
+                      password (get auth :gitlab-password)
+                      token (get auth :gitlab-token)]
+                  (cond
+                    token (private-get-gitlab-conn-inner repository token)
+                    :else (private-get-gitlab-conn-inner repository login password))))
   ([repository token] (GitlabAPI/connect (:repo-url repository) token))
   ([repository login password] (let [gitlab-conn (GitlabAPI/connect (:repo-url repository)
                                                                     login

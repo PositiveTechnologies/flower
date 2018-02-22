@@ -38,8 +38,8 @@
                    password (get auth :github-password)
                    token (get auth :github-token)]
                (cond
-                 (and login password) (private-get-github-conn-inner tracker login password)
                  token (private-get-github-conn-inner tracker token)
+                 (and login password) (private-get-github-conn-inner tracker login password)
                  :else (GitHubClient/createClient (proto/get-tracker-url tracker)))))
   ([tracker token] (doto (GitHubClient/createClient (proto/get-tracker-url tracker))
                      (.setOAuth2Token token)))

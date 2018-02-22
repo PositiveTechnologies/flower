@@ -35,8 +35,8 @@
                       password (get auth :github-password)
                       token (get auth :github-token)]
                   (cond
-                    (and login password) (private-get-github-conn-inner repository login password)
                     token (private-get-github-conn-inner repository token)
+                    (and login password) (private-get-github-conn-inner repository login password)
                     :else (GitHubClient/createClient (proto/get-repository-url repository)))))
   ([repository token] (doto (GitHubClient/createClient (proto/get-repository-url repository))
                         (.setOAuth2Token token)))

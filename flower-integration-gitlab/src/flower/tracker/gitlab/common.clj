@@ -28,8 +28,11 @@
                                 [:auth]
                                 {})
                    login (get auth :gitlab-login)
-                   password (get auth :gitlab-password)]
-               (private-get-gitlab-conn-inner tracker login password)))
+                   password (get auth :gitlab-password)
+                   token (get auth :gitlab-token)]
+               (cond
+                 token (private-get-gitlab-conn-inner tracker token)
+                 :else (private-get-gitlab-conn-inner tracker login password))))
   ([tracker token] (GitlabAPI/connect (:tracker-url tracker) token))
   ([tracker login password] (let [gitlab-conn (GitlabAPI/connect (:tracker-url tracker)
                                                                  login

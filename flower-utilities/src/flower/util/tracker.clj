@@ -17,6 +17,7 @@
         default-domain (credentials/get-credentials :account :domain)
         default-email (credentials/get-credentials :account :email)
         default-token-github (flower.credentials/get-credentials :token :github)
+        default-token-gitlab (flower.credentials/get-credentials :token :gitlab)
         default-token-tfs (flower.credentials/get-credentials :token :tfs)
         default-credentials (into (common/->ComponentAuth)
                                   {:github-login default-login
@@ -24,6 +25,7 @@
                                    :github-token default-token-github
                                    :gitlab-login default-login
                                    :gitlab-password default-password
+                                   :gitlab-token default-token-gitlab
                                    :jira-login default-login
                                    :jira-password default-password
                                    :tfs-login (str default-domain "\\" default-login)
