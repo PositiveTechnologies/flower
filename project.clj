@@ -23,6 +23,7 @@
             "deploy-all" ["do" ["sub" "deploy" "clojars"] ["deploy" "clojars"]]}
   :sub ["flower-proto"
         "flower-common"
+        "flower-integration-default"
         "flower-integration-github"
         "flower-integration-gitlab"
         "flower-integration-jira"
