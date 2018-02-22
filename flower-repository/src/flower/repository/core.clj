@@ -94,9 +94,12 @@
                                               :repo-projects [(or *repository-project* repository-path-second)]
                                               :repo-name (keyword (str "gitlab-" repository-domain "-" (or *repository-project*
                                                                                                            repository-path-second)))}
-          :else (merge {:repo-type *repository-type*
-                        :repo-name (keyword (str (name *repository-type*) "-" repository-domain (when *repository-project*
-                                                                                                  (str "-" *repository-project*))))
+          :else (merge {:repo-type (or *repository-type* :default)
+                        :repo-name (keyword (str (name (or *repository-type* :default))
+                                                 "-"
+                                                 repository-domain
+                                                 (when *repository-project*
+                                                   (str "-" *repository-project*))))
                         :repo-url (or *repository-url*
                                       (str (assoc repository-url
                                                   :path "")))}

@@ -103,9 +103,12 @@
                                          :tracker-projects [(or *tracker-project* tracker-path-second)]
                                          :tracker-name (keyword (str "jira-" tracker-domain "-" (or *tracker-project*
                                                                                                     tracker-path-second)))}
-          :else (merge {:tracker-type *tracker-type*
-                        :tracker-name (keyword (str (name *tracker-type*) "-" tracker-domain (when *tracker-project*
-                                                                                               (str "-" *tracker-project*))))
+          :else (merge {:tracker-type (or *tracker-type* :default)
+                        :tracker-name (keyword (str (name (or *tracker-type* :default))
+                                                    "-"
+                                                    tracker-domain
+                                                    (when *tracker-project*
+                                                      (str "-" *tracker-project*))))
                         :tracker-url (or *tracker-url*
                                          (str (assoc tracker-url
                                                      :path "")))}

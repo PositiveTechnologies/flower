@@ -11,6 +11,7 @@
                  [flower/flower-messaging "0.4.0-SNAPSHOT"]
                  [flower/flower-team "0.4.0-SNAPSHOT"]
                  [flower/flower-utilities "0.4.0-SNAPSHOT"]
+                 [flower/flower-integration-default "0.4.0-SNAPSHOT"]
                  [flower/flower-integration-github "0.4.0-SNAPSHOT"]
                  [flower/flower-integration-gitlab "0.4.0-SNAPSHOT"]
                  [flower/flower-integration-jira "0.4.0-SNAPSHOT"]

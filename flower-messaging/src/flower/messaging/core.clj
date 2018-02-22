@@ -48,13 +48,15 @@
 
 (defn get-messaging-info
   ([] (get-messaging-info nil))
-  ([messaging-full-url] (merge {:messaging-type *messaging-type*
-                                :messaging-name *messaging-type*}
+  ([messaging-full-url] (merge {:messaging-type (or *messaging-type* :default)
+                                :messaging-name (or *messaging-type* "default")}
                                (when messaging-full-url
                                  (let [messaging-url (url/url messaging-full-url)
-                                       messaging-domain (get messaging-url :host)]
-                                   {:messaging-type *messaging-type*
-                                    :messaging-name (keyword (str (name *messaging-type*) "-" messaging-domain))
+                                       messaging-domain (or (get messaging-url :host) "global")]
+                                   {:messaging-type (or *messaging-type* :default)
+                                    :messaging-name (keyword (str (name (or *messaging-type* :default))
+                                                                  "-"
+                                                                  messaging-domain))
                                     :messaging-url (or *messaging-url* (str messaging-url))})))))
 
 
