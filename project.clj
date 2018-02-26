@@ -1,4 +1,4 @@
-(defproject flower "0.4.0-SNAPSHOT"
+(defproject flower "0.4.0"
   :description "Flower is a library for integration with task trackers, repositories, messaging systems and more"
   :url "http://github.com/PositiveTechnologies/flower"
   :license {:name "MIT License"
@@ -6,18 +6,18 @@
   :plugins [[lein-sub "0.3.0"]
             [lein-bump-version "0.1.6"]]
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [flower/flower-tracker "0.4.0-SNAPSHOT"]
-                 [flower/flower-repository "0.4.0-SNAPSHOT"]
-                 [flower/flower-messaging "0.4.0-SNAPSHOT"]
-                 [flower/flower-team "0.4.0-SNAPSHOT"]
-                 [flower/flower-utilities "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-default "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-github "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-gitlab "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-jira "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-tfs "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-exchange "0.4.0-SNAPSHOT"]
-                 [flower/flower-integration-slack "0.4.0-SNAPSHOT"]]
+                 [flower/flower-tracker "0.4.0"]
+                 [flower/flower-repository "0.4.0"]
+                 [flower/flower-messaging "0.4.0"]
+                 [flower/flower-team "0.4.0"]
+                 [flower/flower-utilities "0.4.0"]
+                 [flower/flower-integration-default "0.4.0"]
+                 [flower/flower-integration-github "0.4.0"]
+                 [flower/flower-integration-gitlab "0.4.0"]
+                 [flower/flower-integration-jira "0.4.0"]
+                 [flower/flower-integration-tfs "0.4.0"]
+                 [flower/flower-integration-exchange "0.4.0"]
+                 [flower/flower-integration-slack "0.4.0"]]
   :aliases {"test" ["sub" "lint-and-test-all"]
             "bump-all" ["do" ["bump-version"] ["sub" "bump-version"]]
             "deploy-all" ["do" ["sub" "deploy" "clojars"] ["deploy" "clojars"]]}

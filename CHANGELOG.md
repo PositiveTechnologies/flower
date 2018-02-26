@@ -1,3 +1,15 @@
+# 0.4.0 - 2018-02-26
+
+- Fixed url getting for tasks in task trackers and projects in repositories.
+- Added JQL (Jira Query Language) support.
+- Added Emacs integration.
+- Added support for TFS query paths.
+- Added Slack integration.
+- Implemented loose coupling and dependency resolver for integrations.
+- Added default mock integration for trackers, repositories, messaging.
+- Improved support for Gitlab and Github token authentication.
+- Implemented subscription for messaging systems.
+
 # 0.3.6 - 2018-01-16
 
 - Fixed issue with existing tags deletion in TFS tracker task upserting.
