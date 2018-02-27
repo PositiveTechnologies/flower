@@ -19,6 +19,7 @@
 (defrecord ExchangeMessagebox [msg-component msg-name folder-name]
   proto/MessageboxProto
   (get-message-box-component [message-box] msg-component)
+  (get-messaging-type [message-box] :exchange)
   (get-folder-name [message-box] folder-name)
   (search-messages [message-box] (private-search-messages message-box {}))
   (search-messages [message-box params] (private-search-messages message-box params))

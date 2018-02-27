@@ -1,4 +1,4 @@
-(defproject flower/flower-repository "0.4.0"
+(defproject flower/flower-repository "0.4.1-SNAPSHOT"
   :description "Flower repositories integration"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -15,7 +15,7 @@
                  [com.stuartsierra/component "0.3.2"]
                  [com.cemerick/url "0.1.1"]
                  [tesser.core "1.0.2"]
-                 [flower/flower-common "0.4.0"]
-                 [flower/flower-proto "0.4.0"]]
+                 [flower/flower-common "0.4.1-SNAPSHOT"]
+                 [flower/flower-proto "0.4.1-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

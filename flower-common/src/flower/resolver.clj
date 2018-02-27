@@ -37,6 +37,7 @@
 (defn- private-get-require-name-type [integration-type]
   (case integration-type
     "task" "tracker"
+    "message" "messaging"
     integration-type))
 
 

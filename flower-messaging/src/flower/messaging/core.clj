@@ -68,3 +68,10 @@
                                                                    :context common/*component-context*})
                                                  {messaging-name messaging-info})
                                       messaging-name)))))
+
+
+(defn message [message-data]
+  (let [messaging (get message-data :msg-box)
+        messaging-type (proto/get-messaging-type messaging)
+        messaging-function (resolver/resolve-implementation messaging-type :message)]
+    (messaging-function message-data)))
