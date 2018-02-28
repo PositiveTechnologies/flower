@@ -15,9 +15,7 @@
                  [flower/flower-integration-github "0.4.1-SNAPSHOT"]
                  [flower/flower-integration-gitlab "0.4.1-SNAPSHOT"]
                  [flower/flower-integration-jira "0.4.1-SNAPSHOT"]
-                 [flower/flower-integration-tfs "0.4.1-SNAPSHOT"]
-                 [flower/flower-integration-exchange "0.4.1-SNAPSHOT"]
-                 [flower/flower-integration-slack "0.4.1-SNAPSHOT"]]
+                 [flower/flower-integration-tfs "0.4.1-SNAPSHOT"]]
   :aliases {"test" ["sub" "lint-and-test-all"]
             "bump-all" ["do" ["bump-version"] ["sub" "bump-version"]]
             "deploy-all" ["do" ["sub" "deploy" "clojars"] ["deploy" "clojars"]]}

@@ -10,7 +10,6 @@
 ;;
 
 (declare private-search-slack-messages-inner)
-(declare private-subscribe-inner)
 
 
 ;;
