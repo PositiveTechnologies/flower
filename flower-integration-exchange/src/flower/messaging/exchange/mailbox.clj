@@ -16,11 +16,11 @@
 ;; Public definitions
 ;;
 
-(defrecord ExchangeMessagebox [msg-component msg-name folder-name]
+(defrecord ExchangeMessagebox [msg-component msg-name msg-root]
   proto/MessageboxProto
   (get-message-box-component [message-box] msg-component)
   (get-messaging-type [message-box] :exchange)
-  (get-folder-name [message-box] folder-name)
+  (get-message-box-root [message-box] msg-root)
   (search-messages [message-box] (private-search-messages message-box {}))
   (search-messages [message-box params] (private-search-messages message-box params))
   (subscribe [message-box] (private-subscribe message-box {}))

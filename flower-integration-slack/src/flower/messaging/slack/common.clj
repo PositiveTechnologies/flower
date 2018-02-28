@@ -107,16 +107,16 @@
 (defn- private-search-slack-messages-inner [conn-inner params]
   (let [{count :count
          load-body :load-body
-         subject-filters :subject-filters
-         folder-name :folder-name} params
-        has-filters? (not (empty? subject-filters))
-        folder (when folder-name
-                 (get-slack-channel-id-by-name-inner conn-inner folder-name))]
+         filters :filters
+         msg-root :msg-root} params
+        has-filters? (not (empty? filters))
+        folder (when msg-root
+                 (get-slack-channel-id-by-name-inner conn-inner msg-root))]
     (when folder
       (map (partial private-get-slack-message-inner conn-inner)
            (get (apply (cond
-                         (is-slack-channel-inner conn-inner folder-name) channels/history
-                         (is-slack-group-inner conn-inner folder-name) groups/history)
+                         (is-slack-channel-inner conn-inner msg-root) channels/history
+                         (is-slack-group-inner conn-inner msg-root) groups/history)
                        [conn-inner folder {:count (str count)}])
                 :messages [])))))
 
@@ -143,11 +143,11 @@
 
 
 (defn- private-subscribe-inner [conn-inner params channel]
-  (let [{subject-filters :subject-filters
-         folder-name :folder-name} params
-        has-filters? (not (empty? subject-filters))
-        folder (when folder-name
-                 (get-slack-channel-id-by-name-inner conn-inner folder-name))
+  (let [{filters :filters
+         msg-root :msg-root} params
+        has-filters? (not (empty? filters))
+        folder (when msg-root
+                 (get-slack-channel-id-by-name-inner conn-inner msg-root))
         channel-inner (async/chan)]
     (when (and conn-inner
                folder)

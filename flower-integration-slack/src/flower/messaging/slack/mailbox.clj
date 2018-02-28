@@ -16,11 +16,11 @@
 ;; Public definitions
 ;;
 
-(defrecord SlackMessagebox [msg-component msg-name folder-name]
+(defrecord SlackMessagebox [msg-component msg-name msg-root]
   proto/MessageboxProto
   (get-message-box-component [message-box] msg-component)
   (get-messaging-type [message-box] :slack)
-  (get-folder-name [message-box] folder-name)
+  (get-message-box-root [message-box] msg-root)
   (search-messages [message-box] (private-search-messages message-box {}))
   (search-messages [message-box params] (private-search-messages message-box params))
   (subscribe [message-box] (private-subscribe message-box {}))
@@ -32,10 +32,10 @@
 ;;
 
 (defn- private-search-messages [message-box params]
-  (message/search-slack-messages message-box (merge {:folder-name (proto/get-folder-name message-box)}
+  (message/search-slack-messages message-box (merge {:msg-root (proto/get-message-box-root message-box)}
                                                     params)))
 
 
 (defn- private-subscribe [message-box params]
-  (message/subscribe message-box (merge {:folder-name (proto/get-folder-name message-box)}
+  (message/subscribe message-box (merge {:msg-root (proto/get-message-box-root message-box)}
                                         params)))

@@ -1,7 +1,6 @@
 (ns flower.tracker.core
   (:require [clojure.string :as string]
             [com.stuartsierra.component :as component]
-            [cemerick.url :as url]
             [flower.common :as common]
             [flower.resolver :as resolver]
             [flower.tracker.proto :as proto]))
@@ -60,7 +59,7 @@
 
 
 (defn get-tracker-info [tracker-full-url]
-  (let [tracker-url (url/url tracker-full-url)
+  (let [tracker-url (common/url tracker-full-url)
         tracker-domain (get tracker-url :host)
         tracker-path-components (string/split (string/replace (get tracker-url :path "/")
                                                               #"(\.git)?/?$"

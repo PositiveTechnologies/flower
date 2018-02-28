@@ -1,7 +1,6 @@
 (ns flower.repository.core
   (:require [clojure.string :as string]
             [com.stuartsierra.component :as component]
-            [cemerick.url :as url]
             [tesser.core :as tesser]
             [flower.common :as common]
             [flower.resolver :as resolver]
@@ -68,7 +67,7 @@
 
 
 (defn get-repository-info [repository-full-url]
-  (let [repository-url (url/url repository-full-url)
+  (let [repository-url (common/url repository-full-url)
         repository-domain (get repository-url :host)
         repository-path-components (string/split (string/replace (get repository-url :path "/")
                                                                  #"(\.git)?/?$"

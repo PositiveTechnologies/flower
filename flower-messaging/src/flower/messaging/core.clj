@@ -1,6 +1,5 @@
 (ns flower.messaging.core
   (:require [com.stuartsierra.component :as component]
-            [cemerick.url :as url]
             [flower.common :as common]
             [flower.resolver :as resolver]
             [flower.messaging.proto :as proto]))
@@ -22,14 +21,14 @@
   (into {}
         (map (fn [[messaging-name {messaging-type :messaging-type
                                    messaging-url :messaging-url}]]
-               (let [folder-name (get-in messaging-component [:context :folder-name])]
+               (let [msg-root (get-in messaging-component [:context :msg-root])]
                  [messaging-name [((resolver/resolve-implementation messaging-type :messaging)
                                    (merge {:msg-component messaging-component
                                            :msg-name messaging-name}
                                           (when messaging-url
                                             {:msg-url messaging-url})
-                                          (when folder-name
-                                            {:folder-name folder-name})))]]))
+                                          (when msg-root
+                                            {:msg-root msg-root})))]]))
              messaging)))
 
 
@@ -51,7 +50,7 @@
   ([messaging-full-url] (merge {:messaging-type (or *messaging-type* :default)
                                 :messaging-name (or *messaging-type* "default")}
                                (when messaging-full-url
-                                 (let [messaging-url (url/url messaging-full-url)
+                                 (let [messaging-url (common/url messaging-full-url)
                                        messaging-domain (or (get messaging-url :host) "global")]
                                    {:messaging-type (or *messaging-type* :default)
                                     :messaging-name (keyword (str (name (or *messaging-type* :default))

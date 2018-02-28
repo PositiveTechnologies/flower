@@ -67,15 +67,15 @@
 (defn- private-search-exchange-messages-inner [conn-inner params]
   (let [{count :count
          load-body :load-body
-         subject-filters :subject-filters} params
-        has-filters? (not (empty? subject-filters))
+         filters :filters} params
+        has-filters? (not (empty? filters))
         filter-function (fn [subject-filter]
                           (SearchFilter$ContainsSubstring. ItemSchema/Subject
                                                            subject-filter))
         search-filter (if has-filters?
                         (SearchFilter$SearchFilterCollection. LogicalOperator/And
                                                               (map filter-function
-                                                                   subject-filters)))]
+                                                                   filters)))]
     (loop [offset 0
            view (ItemView. 10)
            results (list)]

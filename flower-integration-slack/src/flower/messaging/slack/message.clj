@@ -46,10 +46,10 @@
 
 (defn- private-search-slack-messages-before-map [message-box params]
   (let [{load-body :load-body
-         folder-name :folder-name} params]
+         msg-root :msg-root} params]
     (map #(private-message-from-inner message-box
                                       load-body
-                                      (merge % {:channelname folder-name}))
+                                      (merge % {:channelname msg-root}))
          (private-search-slack-messages-inner message-box params))))
 
 
@@ -62,7 +62,7 @@
 
 (defn- private-subscribe [message-box params]
   (let [{load-body :load-body
-         folder-name :folder-name} params
+         msg-root :msg-root} params
         conn-inner (common/get-message-box-conn-inner message-box true)
         channel (async/chan)
         channel-inner (common/subscribe-inner conn-inner params channel)]
@@ -75,7 +75,7 @@
               (let [message-inner (async/<! channel-inner)
                     message (when message-inner
                               (private-message-from-inner message-box
-                                                          folder-name
+                                                          msg-root
                                                           message-inner))]
                 (when message
                   (async/>! channel message)

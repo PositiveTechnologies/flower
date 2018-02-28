@@ -1,4 +1,5 @@
-(ns flower.common)
+(ns flower.common
+  (:require [lambdaisland.uri :as uri]))
 
 
 ;;
@@ -16,6 +17,10 @@
                                                     value)))
                                  {}
                                  value))))
+
+
+(defn url [full-url]
+  (uri/uri full-url))
 
 
 (def ^:dynamic *component-auth* (ComponentAuth.))

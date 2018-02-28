@@ -59,7 +59,7 @@
 
 (defn- private-subscribe [message-box params]
   (let [{load-body :load-body
-         folder-name :folder-name} params
+         msg-root :msg-root} params
         conn-inner (common/get-message-box-conn-inner message-box)
         channel (async/chan)
         channel-inner (common/subscribe-inner conn-inner params channel)]
