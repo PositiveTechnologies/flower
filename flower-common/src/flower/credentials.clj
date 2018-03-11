@@ -1,5 +1,7 @@
 (ns flower.credentials
-  (:require [cprop.core :as cprop]))
+  (:require [clojure.java.io :as io]
+            [cprop.core :as cprop]
+            [cprop.source]))
 
 
 ;;
@@ -16,5 +18,11 @@
 ;;
 
 (defn get-credentials [& path]
-  (get-in (cprop/load-config :file *credentials-file*)
+  (get-in (if (.exists (io/as-file *credentials-file*))
+            (cprop/load-config :file *credentials-file*)
+            (cprop/load-config :merge [{:account {}
+                                        :token {}
+                                        :url {}}
+                                       (select-keys (cprop.source/from-env)
+                                                    [:account :token :url])]))
           path))
