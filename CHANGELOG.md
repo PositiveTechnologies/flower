@@ -1,3 +1,9 @@
+# 0.4.1 - 2018-03-16
+
+- Implemented message creation.
+- Deleted messaging integrations from cumulative package.
+- Implemented getting credentials from environment.
+
 # 0.4.0 - 2018-02-26
 
 - Fixed url getting for tasks in task trackers and projects in repositories.

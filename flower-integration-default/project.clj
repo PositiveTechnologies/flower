@@ -1,4 +1,4 @@
-(defproject flower/flower-integration-default "0.4.1-SNAPSHOT"
+(defproject flower/flower-integration-default "0.4.1"
   :description "Flower mock integration"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -13,7 +13,7 @@
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.async "0.4.474"]
-                 [flower/flower-common "0.4.1-SNAPSHOT"]
-                 [flower/flower-proto "0.4.1-SNAPSHOT"]]
+                 [flower/flower-common "0.4.1"]
+                 [flower/flower-proto "0.4.1"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

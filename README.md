@@ -32,7 +32,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.4.0"]
+    [flower "0.4.1"]
 
 Or use the [Leiningen](https://leiningen.org/) template to build a new application from scratch:
 
