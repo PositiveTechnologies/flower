@@ -1,4 +1,4 @@
-(defproject flower/lein-template "0.4.1"
+(defproject flower/lein-template "0.4.2-SNAPSHOT"
   :description "Leiningen template for Flower"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
