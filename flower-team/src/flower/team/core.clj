@@ -11,7 +11,7 @@
 
 
 (defmacro defteam [name & members]
-  `(def ~name '~members))
+  `(def ~name (list ~@members)))
 
 
 ;;
