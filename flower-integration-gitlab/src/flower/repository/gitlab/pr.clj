@@ -9,6 +9,7 @@
 ;;
 
 (declare private-get-gitlab-pull-requests-inner
+         private-get-gitlab-pull-request-comments
          private-get-gitlab-pull-request-counters
          private-get-gitlab-pull-request-commits
          private-get-gitlab-pull-request-files
@@ -18,6 +19,13 @@
 ;;
 ;; Public definitions
 ;;
+
+(defrecord GitlabRepositoryPullRequestComments [comment-author
+                                                comment-text]
+  proto/RepositoryPullRequestCommentProto
+  (get-author [pull-request-comments] comment-author)
+  (get-text [pull-request-comments] comment-text))
+
 
 (defrecord GitlabRepositoryPullRequestCounters [count-upvotes
                                                 count-downvotes
@@ -54,7 +62,8 @@
                                         pr-source-branch
                                         pr-author
                                         pr-assignee
-                                        pr-counters
+                                        pr-comments-future
+                                        pr-counters-future
                                         task-ids]
   proto/RepositoryPullRequestProto
   (get-repository [pull-request] repository)
@@ -63,7 +72,8 @@
   (get-source-branch [pull-request] pr-source-branch)
   (get-target-branch [pull-request] pr-target-branch)
   (get-title [pull-request] pr-title)
-  (get-counters [pull-request] pr-counters)
+  (get-comments [pull-request] @pr-comments-future)
+  (get-counters [pull-request] @pr-counters-future)
   (get-commits [pull-request] (private-get-gitlab-pull-request-commits repository
                                                                        pull-request))
   (get-files [pull-request] (private-get-gitlab-pull-request-files repository
@@ -87,19 +97,21 @@
 
 (defn- private-get-gitlab-pull-requests-before-map [repository options]
   (map #(map->GitlabRepositoryPullRequest
-         {:repository repository
-          :pr-id (.getIid %)
-          :pr-title (.getTitle %)
-          :pr-state (.getState %)
-          :pr-target-branch (.getTargetBranch %)
-          :pr-source-branch (.getSourceBranch %)
-          :pr-author (.getUsername (.getAuthor %))
-          :pr-assignee (let [assignee (.getAssignee %)]
-                         (if assignee
-                           (.getUsername assignee)
-                           nil))
-          :pr-counters (private-get-gitlab-pull-request-counters repository %)
-          :task-ids (list)})
+         (let [pr-comments-future (future (private-get-gitlab-pull-request-comments repository %))]
+           {:repository repository
+            :pr-id (.getIid %)
+            :pr-title (.getTitle %)
+            :pr-state (.getState %)
+            :pr-target-branch (.getTargetBranch %)
+            :pr-source-branch (.getSourceBranch %)
+            :pr-author (.getUsername (.getAuthor %))
+            :pr-assignee (let [assignee (.getAssignee %)]
+                           (if assignee
+                             (.getUsername assignee)
+                             nil))
+            :pr-comments-future pr-comments-future
+            :pr-counters-future (future (private-get-gitlab-pull-request-counters repository % pr-comments-future))
+            :task-ids (list)}))
        (private-get-gitlab-pull-requests-inner repository options)))
 
 
@@ -160,9 +172,17 @@
          grouped-list)))
 
 
-(defn- private-get-gitlab-pull-request-counters [repository pull-request-inner]
-  (let [notes (.getNotes (common/get-gitlab-conn-inner repository) pull-request-inner)
-        notes-map (private-get-pull-request-notes-counters-by-patterns (map #(.getBody %) notes)
+(defn- private-get-gitlab-pull-request-comments [repository pull-request-inner]
+  (let [notes (try (.getNotes (common/get-gitlab-conn-inner repository) pull-request-inner)
+                   (catch java.io.IOException e nil))]
+    (map #(map->GitlabRepositoryPullRequestComments {:comment-author (.getUsername (.getAuthor %))
+                                                     :comment-text (.getBody %)})
+         notes)))
+
+
+(defn- private-get-gitlab-pull-request-counters [repository pull-request-inner pr-comments-future]
+  (let [notes @pr-comments-future
+        notes-map (private-get-pull-request-notes-counters-by-patterns (map #(proto/get-text %) notes)
                                                                        ["merge conflict"
                                                                         "reassign"
                                                                         "lgtm"

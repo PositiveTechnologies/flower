@@ -12,6 +12,7 @@
 (macros/public-definition get-tfs-workitems-inner cached)
 (macros/public-definition get-tfs-workitems-partial-inner)
 (macros/public-definition get-tfs-query-inner cached)
+(macros/public-definition get-tfs-workitem-comments-inner cached)
 (macros/public-definition get-tfs-iterations-inner cached)
 (macros/public-definition get-tfs-capacity-inner cached)
 (macros/public-definition set-tfs-workitem-inner!)
@@ -83,6 +84,11 @@
                                                (map :id result)))
     (with-tfs-function tracker true ("/_apis/wit/queries/" query-id) {} :id
       (private-get-tfs-query-inner tracker result))))
+
+
+(defn- private-get-tfs-workitem-comments-inner [tracker task-id]
+  (with-tfs-function tracker false ("/_apis/wit/workitems/" task-id "/comments") {} :comments
+    result))
 
 
 (defn- private-get-tfs-iterations-inner [tracker]

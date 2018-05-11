@@ -11,6 +11,7 @@
 ;; Private declarations
 ;;
 
+(declare private-get-tfs-workitem-comments)
 (declare private-set-tfs-workitem!)
 (declare private-get-tfs-workitem-url)
 
@@ -19,13 +20,21 @@
 ;; Public definitions
 ;;
 
-(defrecord TFSTrackerTask [tracker task-id task-title task-type task-state task-tags task-description]
+(defrecord TFSTrackerTaskComment [comment-author
+                                  comment-text]
+  proto/TrackerTaskCommentProto
+  (get-author [tracker-task-comment] comment-author)
+  (get-text [tracker-task-comment] comment-text))
+
+
+(defrecord TFSTrackerTask [tracker task-id task-title task-type task-state task-tags task-description task-comments-future]
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
   (get-task-url [tracker-task] (private-get-tfs-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
+  (get-comments [tracker-task] @task-comments-future)
   (upsert! [tracker-task] (private-set-tfs-workitem! tracker-task)))
 
 
@@ -47,10 +56,19 @@
             :task-state (get fields :System.State)
             :task-tags (filter (complement empty?)
                                (string/split (get fields :System.Tags "") #"; "))
-            :task-description (get fields :System.Description)}))
+            :task-description (get fields :System.Description)
+            :task-comments-future (future (private-get-tfs-workitem-comments tracker %))}))
        (if (string? query)
          (tfs.common/get-tfs-query-inner tracker query)
          (tfs.common/get-tfs-workitems-inner tracker query))))
+
+
+(defn- private-get-tfs-workitem-comments [tracker workitem-inner]
+  (let [notes (try (tfs.common/get-tfs-workitem-comments-inner tracker (get workitem-inner :id))
+                   (catch java.io.IOException e nil))]
+    (map #(map->TFSTrackerTaskComment {:comment-author (get-in % [:revisedBy :name])
+                                       :comment-text (get % :text)})
+         notes)))
 
 
 (defn- private-get-tfs-workitems [tracker query]

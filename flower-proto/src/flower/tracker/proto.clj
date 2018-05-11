@@ -25,7 +25,13 @@
   (get-tracker [tracker-task])
   (get-state [tracker-task])
   (get-type [tracker-task])
+  (get-comments [tracker-task])
   (upsert! [tracker-task]))
+
+
+(defprotocol TrackerTaskCommentProto
+  (get-author [tracker-task-comment])
+  (get-text [tracker-task-comment]))
 
 
 (defprotocol TrackerIterationProto

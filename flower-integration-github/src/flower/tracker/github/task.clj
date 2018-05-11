@@ -10,6 +10,7 @@
 ;; Private declarations
 ;;
 
+(declare private-get-github-workitem-comments)
 (declare private-set-github-workitem!)
 (declare private-get-github-workitem-url)
 
@@ -18,13 +19,21 @@
 ;; Public definitions
 ;;
 
-(defrecord GithubTrackerTask [tracker task-id task-title task-type task-state task-tags task-description]
+(defrecord GithubTrackerTaskComment [comment-author
+                                     comment-text]
+  proto/TrackerTaskCommentProto
+  (get-author [tracker-task-comment] comment-author)
+  (get-text [tracker-task-comment] comment-text))
+
+
+(defrecord GithubTrackerTask [tracker task-id task-title task-type task-state task-tags task-description task-comments-future]
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
   (get-task-url [tracker-task] (private-get-github-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
+  (get-comments [tracker-task] @task-comments-future)
   (upsert! [tracker-task] (private-set-github-workitem! tracker-task)))
 
 
@@ -49,10 +58,19 @@
           :task-tags (map (fn [label]
                             (.toString label))
                           (.getLabels %))
-          :task-description (.getBody %)})
+          :task-description (.getBody %)
+          :task-comments-future (future (private-get-github-workitem-comments tracker %))})
        (if (empty? task-ids)
          (github.common/get-github-workitems-inner tracker)
          (github.common/get-github-workitems-inner tracker task-ids))))
+
+
+(defn- private-get-github-workitem-comments [tracker workitem-inner]
+  (let [notes (try (github.common/get-github-workitem-comments-inner tracker workitem-inner)
+                   (catch java.io.IOException e nil))]
+    (map #(map->GithubTrackerTaskComment {:comment-author (.getLogin (.getUser %))
+                                          :comment-text (.getBody %)})
+         notes)))
 
 
 (defn- private-get-github-workitems [tracker task-ids]

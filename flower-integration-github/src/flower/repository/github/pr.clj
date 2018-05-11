@@ -9,6 +9,7 @@
 ;;
 
 (declare private-get-github-pull-requests-inner
+         private-get-github-pull-request-comments
          private-get-github-pull-request-counters
          private-get-github-pull-request-commits
          private-get-github-pull-request-files
@@ -18,6 +19,13 @@
 ;;
 ;; Public definitions
 ;;
+
+(defrecord GithubRepositoryPullRequestComment [comment-author
+                                               comment-text]
+  proto/RepositoryPullRequestCommentProto
+  (get-author [pull-request-comments] comment-author)
+  (get-text [pull-request-comments] comment-text))
+
 
 (defrecord GithubRepositoryPullRequestCounters [count-upvotes
                                                 count-downvotes
@@ -54,7 +62,8 @@
                                         pr-source-branch
                                         pr-author
                                         pr-assignee
-                                        pr-counters
+                                        pr-comments-future
+                                        pr-counters-future
                                         task-ids]
   proto/RepositoryPullRequestProto
   (get-repository [pull-request] repository)
@@ -63,7 +72,8 @@
   (get-source-branch [pull-request] pr-source-branch)
   (get-target-branch [pull-request] pr-target-branch)
   (get-title [pull-request] pr-title)
-  (get-counters [pull-request] pr-counters)
+  (get-comments [pull-request] @pr-comments-future)
+  (get-counters [pull-request] @pr-counters-future)
   (get-commits [pull-request] (private-get-github-pull-request-commits repository
                                                                        pull-request))
   (get-files [pull-request] (private-get-github-pull-request-files repository
@@ -87,22 +97,24 @@
 
 (defn- private-get-github-pull-requests-before-map [repository options]
   (map #(map->GithubRepositoryPullRequest
-         {:repository repository
-          :pr-id (.getNumber %)
-          :pr-title (.getTitle %)
-          :pr-state (let [state (.getState %)]
-                      (if (= state "open")
-                        "opened"
-                        state))
-          :pr-target-branch (.getRef (.getBase %))
-          :pr-source-branch (.getRef (.getHead %))
-          :pr-author (.getName (.getUser %))
-          :pr-assignee (let [assignee (.getAssignee %)]
-                         (if assignee
-                           (.getName assignee)
-                           nil))
-          :pr-counters (private-get-github-pull-request-counters repository %)
-          :task-ids (list)})
+         (let [pr-comments-future (future (private-get-github-pull-request-comments repository %))]
+           {:repository repository
+            :pr-id (.getNumber %)
+            :pr-title (.getTitle %)
+            :pr-state (let [state (.getState %)]
+                        (if (= state "open")
+                          "opened"
+                          state))
+            :pr-target-branch (.getRef (.getBase %))
+            :pr-source-branch (.getRef (.getHead %))
+            :pr-author (.getLogin (.getUser %))
+            :pr-assignee (let [assignee (.getAssignee %)]
+                           (if assignee
+                             (.getName assignee)
+                             nil))
+            :pr-comments-future pr-comments-future
+            :pr-counters-future (future (private-get-github-pull-request-counters repository % pr-comments-future))
+            :task-ids (list)}))
        (private-get-github-pull-requests-inner repository options)))
 
 
@@ -157,9 +169,17 @@
          files)))
 
 
-(defn- private-get-github-pull-request-counters [repository pull-request]
-  (let [notes (common/get-github-pull-request-comments-inner repository pull-request)
-        notes-map (private-get-pull-request-notes-counters-by-patterns (map #(.getBody %) notes)
+(defn- private-get-github-pull-request-comments [repository pull-request]
+  (let [notes (try (common/get-github-pull-request-comments-inner repository pull-request)
+                   (catch java.io.IOException e nil))]
+    (map #(map->GithubRepositoryPullRequestComment {:comment-author (.getLogin (.getUser %))
+                                                    :comment-text (.getBody %)})
+         notes)))
+
+
+(defn- private-get-github-pull-request-counters [repository pull-request pr-comments-future]
+  (let [notes @pr-comments-future
+        notes-map (private-get-pull-request-notes-counters-by-patterns (map #(proto/get-text %) notes)
                                                                        ["merge conflict"
                                                                         "reassign"
                                                                         "lgtm"

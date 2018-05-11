@@ -72,11 +72,11 @@
     (.getPullRequests pull-request-service project-inner state)))
 
 
-(defn- private-get-github-pull-request-comments-inner [repository pull-request-inner]
+(defn- private-get-github-pull-request-comments-inner [repository pull-request]
   (let [conn-inner (get-github-conn-inner repository)
         project-inner (get-github-project-inner repository)
         pull-request-service (PullRequestService. conn-inner)
-        pull-request-id (.getNumber pull-request-inner)]
+        pull-request-id (.getNumber pull-request)]
     (.getComments pull-request-service project-inner pull-request-id)))
 
 

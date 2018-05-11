@@ -21,6 +21,7 @@
 (macros/public-definition get-github-project-inner always-cached)
 (macros/public-definition get-github-projects-inner cached)
 (macros/public-definition get-github-workitems-inner cached)
+(macros/public-definition get-github-workitem-comments-inner cached)
 (macros/public-definition get-github-iterations-inner cached)
 (macros/public-definition get-github-capacity-inner cached)
 (macros/public-definition set-github-workitem-inner!)
@@ -78,6 +79,14 @@
                         (into [] (filter (fn [issue]
                                            (.contains task-ids-list (.getNumber issue)))
                                          (get-github-workitems-inner tracker))))))
+
+
+(defn- private-get-github-workitem-comments-inner [tracker workitem-inner]
+  (let [conn-inner (get-github-conn-inner tracker)
+        project-inner (get-github-project-inner tracker)
+        workitem-id (.getNumber workitem-inner)
+        issue-service (IssueService. conn-inner)]
+    (.getComments issue-service project-inner workitem-id)))
 
 
 (defn- private-get-github-iterations-inner [tracker]

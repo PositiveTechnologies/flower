@@ -10,6 +10,7 @@
 ;; Private declarations
 ;;
 
+(declare private-get-jira-workitem-comments)
 (declare private-set-jira-workitem!)
 (declare private-get-jira-workitem-url)
 
@@ -18,13 +19,21 @@
 ;; Public definitions
 ;;
 
-(defrecord JiraTrackerTask [tracker task-id task-title task-type task-state task-tags task-description]
+(defrecord JiraTrackerTaskComment [comment-author
+                                   comment-text]
+  proto/TrackerTaskCommentProto
+  (get-author [tracker-task-comment] comment-author)
+  (get-text [tracker-task-comment] comment-text))
+
+
+(defrecord JiraTrackerTask [tracker task-id task-title task-type task-state task-tags task-description task-comments-future]
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
   (get-task-url [tracker-task] (private-get-jira-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
+  (get-comments [tracker-task] @task-comments-future)
   (upsert! [tracker-task] (private-set-jira-workitem! tracker-task)))
 
 
@@ -41,18 +50,28 @@
           :task-id (.getKey %)
           :task-title (.getSummary %)
           :task-type (.getName (.getIssueType %))
-          :task-assignee (let [assignee (.getAssignee %)]
-                           (if assignee
-                             (.getName assignee)
-                             nil))
+          :task-assignee (some-> %
+                                 .getAssignee
+                                 .getName)
           :task-state (.getName (.getStatus %))
           :task-tags (.getLabels %)
-          :task-description (.getDescription %)})
+          :task-description (.getDescription %)
+          :task-comments-future (future (private-get-jira-workitem-comments tracker %))})
        (if (string? query)
          (jira.common/get-jira-query-inner tracker query)
          (if (empty? query)
            (jira.common/get-jira-query-inner tracker (str "project=\"" (proto/get-project-name tracker) "\""))
            (jira.common/get-jira-workitems-inner tracker query)))))
+
+
+(defn- private-get-jira-workitem-comments [tracker workitem-inner]
+  (let [notes (try (jira.common/get-jira-workitem-comments-inner tracker workitem-inner)
+                   (catch java.io.IOException e nil))]
+    (map #(map->JiraTrackerTaskComment {:comment-author (some-> %
+                                                                .getAuthor
+                                                                .getName)
+                                        :comment-text (.getBody %)})
+         notes)))
 
 
 (defn- private-get-jira-workitems [tracker query]

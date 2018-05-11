@@ -22,6 +22,7 @@
 (macros/public-definition get-jira-issue-types-inner cached)
 (macros/public-definition get-jira-workitems-inner cached)
 (macros/public-definition get-jira-query-inner cached)
+(macros/public-definition get-jira-workitem-comments-inner cached)
 (macros/public-definition get-jira-iterations-inner cached)
 (macros/public-definition get-jira-capacity-inner cached)
 (macros/public-definition set-jira-workitem-inner!)
@@ -90,6 +91,10 @@
       (.searchJql query)
       (.claim)
       (.getIssues)))
+
+
+(defn- private-get-jira-workitem-comments-inner [tracker workitem-inner]
+  (.getComments workitem-inner))
 
 
 (defn- private-get-jira-iterations-inner [tracker]

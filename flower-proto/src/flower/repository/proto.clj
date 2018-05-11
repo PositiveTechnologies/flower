@@ -23,6 +23,7 @@
   (get-source-branch [pull-request])
   (get-target-branch [pull-request])
   (get-title [pull-request])
+  (get-comments [pull-request])
   (get-counters [pull-request])
   (get-commits [pull-request])
   (get-files [pull-request])
@@ -33,3 +34,8 @@
 
 (defprotocol RepositoryPullRequestCounterProto
   (get-wips [pull-request-counters]))
+
+
+(defprotocol RepositoryPullRequestCommentProto
+  (get-author [pull-request-comment])
+  (get-text [pull-request-comment]))

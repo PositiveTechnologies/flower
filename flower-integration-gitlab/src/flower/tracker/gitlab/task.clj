@@ -10,6 +10,7 @@
 ;; Private declarations
 ;;
 
+(declare private-get-gitlab-workitem-comments)
 (declare private-set-gitlab-workitem!)
 (declare private-get-gitlab-workitem-url)
 
@@ -18,13 +19,21 @@
 ;; Public definitions
 ;;
 
-(defrecord GitlabTrackerTask [tracker task-id task-title task-type task-state task-tags task-description]
+(defrecord GitlabTrackerTaskComment [comment-author
+                                     comment-text]
+  proto/TrackerTaskCommentProto
+  (get-author [tracker-task-comment] comment-author)
+  (get-text [tracker-task-comment] comment-text))
+
+
+(defrecord GitlabTrackerTask [tracker task-id task-title task-type task-state task-tags task-description task-comments-future]
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
   (get-task-url [tracker-task] (private-get-gitlab-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
+  (get-comments [tracker-task] @task-comments-future)
   (upsert! [tracker-task] (private-set-gitlab-workitem! tracker-task)))
 
 
@@ -47,10 +56,19 @@
                              nil))
           :task-state (.getState %)
           :task-tags (seq (.getLabels %))
-          :task-description (.getDescription %)})
+          :task-description (.getDescription %)
+          :task-comments-future (future (private-get-gitlab-workitem-comments tracker %))})
        (if (empty? task-ids)
          (gitlab.common/get-gitlab-workitems-inner tracker)
          (gitlab.common/get-gitlab-workitems-inner tracker task-ids))))
+
+
+(defn- private-get-gitlab-workitem-comments [tracker workitem-inner]
+  (let [notes (try (.getNotes (gitlab.common/get-gitlab-conn-inner tracker) workitem-inner)
+                   (catch java.io.IOException e nil))]
+    (map #(map->GitlabTrackerTaskComment {:comment-author (.getUsername (.getAuthor %))
+                                          :comment-text (.getBody %)})
+         notes)))
 
 
 (defn- private-get-gitlab-workitems [tracker task-ids]
