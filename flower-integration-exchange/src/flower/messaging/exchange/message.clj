@@ -66,8 +66,7 @@
     (async/go-loop []
       (if (or (.closed? channel-inner)
               (.closed? channel))
-        (do (println channel-inner channel)
-            (async/close! channel-inner)
+        (do (async/close! channel-inner)
             (async/close! channel))
         (let [message-inner (async/<! channel-inner)
               message (when message-inner

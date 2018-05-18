@@ -57,7 +57,7 @@
             :task-tags (filter (complement empty?)
                                (string/split (get fields :System.Tags "") #"; "))
             :task-description (get fields :System.Description)
-            :task-comments-future (future (private-get-tfs-workitem-comments tracker %))}))
+            :task-comments-future (macros/future-or-delay (private-get-tfs-workitem-comments tracker %))}))
        (if (string? query)
          (tfs.common/get-tfs-query-inner tracker query)
          (tfs.common/get-tfs-workitems-inner tracker query))))
@@ -101,7 +101,7 @@
                                       :task-state :System.State
                                       :task-tags :System.Tags
                                       :task-description :System.Description})
-        fields-without-tracker (dissoc fields :tracker)
+        fields-without-tracker (dissoc fields :tracker :task-comments-future)
         new-task-id (get (tfs.common/set-tfs-workitem-inner! tracker task-id fields-without-tracker) :id)]
     (when common/*behavior-implicit-cache-cleaning*
       (tfs.common/get-tfs-workitems-inner-clear-cache!)

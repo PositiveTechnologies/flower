@@ -97,7 +97,7 @@
 
 (defn- private-get-gitlab-pull-requests-before-map [repository options]
   (map #(map->GitlabRepositoryPullRequest
-         (let [pr-comments-future (future (private-get-gitlab-pull-request-comments repository %))]
+         (let [pr-comments-future (macros/future-or-delay (private-get-gitlab-pull-request-comments repository %))]
            {:repository repository
             :pr-id (.getIid %)
             :pr-title (.getTitle %)
@@ -110,7 +110,9 @@
                              (.getUsername assignee)
                              nil))
             :pr-comments-future pr-comments-future
-            :pr-counters-future (future (private-get-gitlab-pull-request-counters repository % pr-comments-future))
+            :pr-counters-future (macros/future-or-delay (private-get-gitlab-pull-request-counters repository
+                                                                                                  %
+                                                                                                  pr-comments-future))
             :task-ids (list)}))
        (private-get-gitlab-pull-requests-inner repository options)))
 

@@ -97,7 +97,7 @@
 
 (defn- private-get-github-pull-requests-before-map [repository options]
   (map #(map->GithubRepositoryPullRequest
-         (let [pr-comments-future (future (private-get-github-pull-request-comments repository %))]
+         (let [pr-comments-future (macros/future-or-delay (private-get-github-pull-request-comments repository %))]
            {:repository repository
             :pr-id (.getNumber %)
             :pr-title (.getTitle %)
@@ -113,7 +113,9 @@
                              (.getName assignee)
                              nil))
             :pr-comments-future pr-comments-future
-            :pr-counters-future (future (private-get-github-pull-request-counters repository % pr-comments-future))
+            :pr-counters-future (macros/future-or-delay (private-get-github-pull-request-counters repository
+                                                                                                  %
+                                                                                                  pr-comments-future))
             :task-ids (list)}))
        (private-get-github-pull-requests-inner repository options)))
 

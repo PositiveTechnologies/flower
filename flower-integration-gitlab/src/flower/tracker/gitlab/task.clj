@@ -57,7 +57,7 @@
           :task-state (.getState %)
           :task-tags (seq (.getLabels %))
           :task-description (.getDescription %)
-          :task-comments-future (future (private-get-gitlab-workitem-comments tracker %))})
+          :task-comments-future (macros/future-or-delay (private-get-gitlab-workitem-comments tracker %))})
        (if (empty? task-ids)
          (gitlab.common/get-gitlab-workitems-inner tracker)
          (gitlab.common/get-gitlab-workitems-inner tracker task-ids))))

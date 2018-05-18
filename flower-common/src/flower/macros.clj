@@ -90,3 +90,16 @@
   `(do (require 'flower.common)
        (binding [flower.common/*behavior-implicit-cache-cleaning* false]
          ~@body)))
+
+
+(defmacro future-or-delay [& body]
+  `(do (require 'flower.common)
+       (if flower.common/*behavior-do-long-operations-in-parallel*
+         (future ~@body)
+         (delay ~@body))))
+
+
+(defmacro with-long-operations-in-parallel [& body]
+  `(do (require 'flower.common)
+       (binding [flower.common/*behavior-do-long-operations-in-parallel* true]
+         ~@body)))

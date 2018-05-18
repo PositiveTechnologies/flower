@@ -56,7 +56,7 @@
           :task-state (.getName (.getStatus %))
           :task-tags (.getLabels %)
           :task-description (.getDescription %)
-          :task-comments-future (future (private-get-jira-workitem-comments tracker %))})
+          :task-comments-future (macros/future-or-delay (private-get-jira-workitem-comments tracker %))})
        (if (string? query)
          (jira.common/get-jira-query-inner tracker query)
          (if (empty? query)

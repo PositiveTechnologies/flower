@@ -59,7 +59,7 @@
                             (.toString label))
                           (.getLabels %))
           :task-description (.getBody %)
-          :task-comments-future (future (private-get-github-workitem-comments tracker %))})
+          :task-comments-future (macros/future-or-delay (private-get-github-workitem-comments tracker %))})
        (if (empty? task-ids)
          (github.common/get-github-workitems-inner tracker)
          (github.common/get-github-workitems-inner tracker task-ids))))
