@@ -10,7 +10,8 @@
 
 (declare private-repository-name-only
          private-get-projects
-         private-get-pull-requests)
+         private-get-pull-requests
+         private-get-gitlab-project-path)
 
 
 ;;
@@ -25,7 +26,8 @@
   (get-projects [repository] (private-get-projects repository repo-name repo-url))
   (get-pull-requests [repository] (private-get-pull-requests repository repo-project {}))
   (get-pull-requests [repository options] (private-get-pull-requests repository repo-project options))
-  (get-repository-url [repository] repo-url))
+  (get-repository-url [repository] repo-url)
+  (get-project-url [repository] (str repo-url "/" (private-get-gitlab-project-path repository))))
 
 
 ;;
@@ -51,3 +53,7 @@
   (if (nil? repo-project)
     (list)
     (pr/get-gitlab-pull-requests repository options)))
+
+
+(defn- private-get-gitlab-project-path [repository]
+  (.getPathWithNamespace (common/get-gitlab-project-inner repository)))

@@ -25,7 +25,8 @@
   (get-projects [repository] (private-get-projects repository repo-name repo-url))
   (get-pull-requests [repository] (private-get-pull-requests repository repo-project {}))
   (get-pull-requests [repository options] (private-get-pull-requests repository repo-project options))
-  (get-repository-url [repository] repo-url))
+  (get-repository-url [repository] repo-url)
+  (get-project-url [repository] (str repo-url "/" repo-project)))
 
 
 ;;

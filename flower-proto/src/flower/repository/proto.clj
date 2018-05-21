@@ -13,7 +13,8 @@
   (get-pull-requests
     [repository]
     [repository options])
-  (get-repository-url [tracker]))
+  (get-repository-url [repository])
+  (get-project-url [repository]))
 
 
 (defprotocol RepositoryPullRequestProto
