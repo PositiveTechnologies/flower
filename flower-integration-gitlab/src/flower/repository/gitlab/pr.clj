@@ -1,7 +1,8 @@
 (ns flower.repository.gitlab.pr
   (:require [flower.macros :as macros]
             [flower.repository.proto :as proto]
-            [flower.repository.gitlab.common :as common]))
+            [flower.repository.gitlab.common :as common])
+  (:import (java.io FileNotFoundException)))
 
 
 ;;
@@ -217,6 +218,9 @@
         project-inner (common/get-gitlab-project-inner repository)
         opened-pull-requests (.getOpenMergeRequests conn-inner project-inner)
         inner-pull-request (first (filter #(= (.getIid %) pr-id) opened-pull-requests))]
-    (if inner-pull-request
-      (.acceptMergeRequest conn-inner project-inner (.getId inner-pull-request) message))
+    (when inner-pull-request
+      (try
+        (.acceptMergeRequest conn-inner project-inner (.getId inner-pull-request) message)
+        (catch FileNotFoundException e
+          (.acceptMergeRequest conn-inner project-inner pr-id message))))
     (assoc pull-request :pr-state "merged")))
