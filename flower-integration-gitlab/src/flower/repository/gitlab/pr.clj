@@ -15,6 +15,7 @@
          private-get-gitlab-pull-request-counters
          private-get-gitlab-pull-request-commits
          private-get-gitlab-pull-request-files
+         private-set-assignee!
          private-merge-pull-request!)
 
 
@@ -80,6 +81,10 @@
                                                                        pull-request))
   (get-files [pull-request] (private-get-gitlab-pull-request-files repository
                                                                    pull-request))
+  (set-assignee! [pull-request assignee] (private-set-assignee! repository
+                                                                pull-request
+                                                                pr-id
+                                                                assignee))
   (merge-pull-request! [pull-request] (private-merge-pull-request! repository
                                                                    pull-request
                                                                    pr-id
@@ -214,6 +219,32 @@
       nil (.getMergeRequests conn-inner project-inner))))
 
 
+(defn- private-set-assignee! [repository pull-request pr-id assignee]
+  (let [conn-inner (common/get-gitlab-conn-inner repository)
+        project-inner (common/get-gitlab-project-inner repository)
+        opened-pull-requests (.getOpenMergeRequests conn-inner project-inner)
+        inner-pull-request (first (filter #(= (.getIid %) pr-id) opened-pull-requests))]
+    (if inner-pull-request
+      (try
+        (or (when-let [assignee' (and assignee
+                                      (first (.findUsers conn-inner assignee)))]
+              (let [pull-request-inner (.updateMergeRequest conn-inner
+                                                            (.getId project-inner)
+                                                            (int pr-id)
+                                                            nil
+                                                            (.getId assignee')
+                                                            nil
+                                                            nil
+                                                            nil
+                                                            nil)]
+                (assoc pull-request
+                       :pr-assignee (.getUsername (.getAssignee pull-request-inner)))))
+            pull-request)
+        (catch GitlabAPIException e
+          pull-request))
+      pull-request)))
+
+
 (defn- private-merge-pull-request! [repository pull-request pr-id message]
   (let [conn-inner (common/get-gitlab-conn-inner repository)
         project-inner (common/get-gitlab-project-inner repository)
@@ -221,11 +252,11 @@
         inner-pull-request (first (filter #(= (.getIid %) pr-id) opened-pull-requests))]
     (if inner-pull-request
       (try
-        (try
-          (.acceptMergeRequest conn-inner project-inner (.getId inner-pull-request) message)
-          (catch FileNotFoundException e
-            (.acceptMergeRequest conn-inner project-inner pr-id message)))
-        (assoc pull-request :pr-state "merged")
+        (assoc pull-request
+               :pr-state (.getState (try
+                                      (.acceptMergeRequest conn-inner project-inner (.getId inner-pull-request) message)
+                                      (catch FileNotFoundException e
+                                        (.acceptMergeRequest conn-inner project-inner pr-id message)))))
         (catch GitlabAPIException e
           pull-request))
       pull-request)))

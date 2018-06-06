@@ -13,6 +13,7 @@
          private-get-github-pull-request-counters
          private-get-github-pull-request-commits
          private-get-github-pull-request-files
+         private-set-assignee!
          private-merge-pull-request!)
 
 
@@ -78,6 +79,10 @@
                                                                        pull-request))
   (get-files [pull-request] (private-get-github-pull-request-files repository
                                                                    pull-request))
+  (set-assignee! [pull-request assignee] (private-set-assignee! repository
+                                                                pull-request
+                                                                pr-id
+                                                                assignee))
   (merge-pull-request! [pull-request] (private-merge-pull-request! repository
                                                                    pull-request
                                                                    pr-id
@@ -203,6 +208,14 @@
                                            "merged" "closed"
                                            "closed" "closed"
                                            nil "all")))
+
+
+(defn- private-set-assignee! [repository pull-request pr-id assignee]
+  (let [pull-request-inner (common/set-assignee-inner! repository pull-request pr-id assignee)
+        pr-assignee (when-let [assignee (.getAssignee pull-request-inner)]
+                      (.getName assignee))]
+    (assoc pull-request
+           :pr-assignee pr-assignee)))
 
 
 (defn- private-merge-pull-request! [repository pull-request pr-id message]

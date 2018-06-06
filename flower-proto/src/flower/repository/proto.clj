@@ -28,6 +28,7 @@
   (get-counters [pull-request])
   (get-commits [pull-request])
   (get-files [pull-request])
+  (set-assignee! [pull-request assignee])
   (merge-pull-request!
     [pull-request]
     [pull-request message]))

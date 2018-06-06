@@ -6,7 +6,8 @@
            (org.eclipse.egit.github.core.client GitHubClient
                                                 RequestException)
            (org.eclipse.egit.github.core.service PullRequestService
-                                                 RepositoryService)))
+                                                 RepositoryService
+                                                 UserService)))
 
 
 ;;
@@ -20,6 +21,7 @@
 (macros/public-definition get-github-pull-request-comments-inner cached)
 (macros/public-definition get-github-pull-request-commits-inner cached)
 (macros/public-definition get-github-pull-request-files-inner cached)
+(macros/public-definition set-assignee-inner!)
 (macros/public-definition merge-github-pull-request-inner!)
 
 
@@ -94,6 +96,21 @@
         pull-request-service (PullRequestService. conn-inner)
         pull-request-id (proto/get-pull-request-id pull-request)]
     (.getFiles pull-request-service project-inner pull-request-id)))
+
+
+(defn- private-set-assignee-inner! [repository pull-request pr-id assignee]
+  (let [conn-inner (get-github-conn-inner repository)
+        project-inner (get-github-project-inner repository)
+        pull-request-service (PullRequestService. conn-inner)
+        pull-request-inner (.getPullRequest pull-request-service pr-id)
+        user-service (UserService. conn-inner)]
+    (if (and assignee
+             pull-request-inner)
+      (if-let [found-user (.getUser user-service assignee)]
+        (.editPullRequest pull-request-service
+                          (.setAssignee pull-request-inner found-user))
+        pull-request-inner)
+      pull-request-inner)))
 
 
 (defn- private-merge-github-pull-request-inner! [repository pull-request pr-id message]
