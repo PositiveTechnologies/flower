@@ -1,3 +1,12 @@
+# 0.4.2 - 2018-06-18
+
+- Implemented comments getting for tasks in task trackers.
+- Implemented comments getting for pull requests in repositories.
+- Added ability to get project URLs for repositories.
+- Added ability to assign reviewers for pull requests.
+- Fixed issue with merging Gitlab pull requests.
+- Fixed teams handling issue.
+
 # 0.4.1 - 2018-03-16
 
 - Implemented message creation.

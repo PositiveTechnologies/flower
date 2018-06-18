@@ -5,7 +5,7 @@
 ;; Author: Sergey Sobko <SSobko@ptsecurity.com>
 ;; URL: https://github.com/PositiveTechnologies/flower
 ;; Keywords: hypermedia, outlines, tools, vc
-;; Version: 0.4.1
+;; Version: 0.4.2
 ;; Package-Requires: ((emacs "24.4")(clomacs "0.0.3"))
 
 ;; This file is not part of GNU Emacs.
