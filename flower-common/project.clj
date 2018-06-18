@@ -12,7 +12,7 @@
             "test-all" ["with-profile" "default:+1.7:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/core.memoize "0.5.9"]
+                 [org.clojure/core.memoize "0.7.1"]
                  [com.cemerick/pomegranate "1.0.0"]
                  [lambdaisland/uri "1.1.0"]
                  [cprop "0.1.11"]

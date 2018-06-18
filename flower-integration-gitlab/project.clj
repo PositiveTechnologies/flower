@@ -13,9 +13,9 @@
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :repositories {"sonatype" "https://oss.sonatype.org/content/repositories/releases"}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [joda-time/joda-time "2.9.9"]
+                 [joda-time/joda-time "2.10"]
                  [org.gitlab/java-gitlab-api "4.0.0"]
-                 [clj-time "0.14.2"]
+                 [clj-time "0.14.4"]
                  [flower/flower-common "0.4.3-SNAPSHOT"]
                  [flower/flower-proto "0.4.3-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}

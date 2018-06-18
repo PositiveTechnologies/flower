@@ -13,9 +13,9 @@
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/data.json "0.2.6"]
-                 [joda-time/joda-time "2.9.9"]
-                 [clj-http "3.7.0"]
-                 [clj-time "0.14.2"]
+                 [joda-time/joda-time "2.10"]
+                 [clj-http "3.9.0"]
+                 [clj-time "0.14.4"]
                  [flower/flower-common "0.4.3-SNAPSHOT"]
                  [flower/flower-proto "0.4.3-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}

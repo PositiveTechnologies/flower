@@ -4,6 +4,7 @@
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
   :plugins [[lein-sub "0.3.0"]
+            [lein-ancient "0.6.15"]
             [lein-bump-version "0.1.6"]]
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [flower/flower-tracker "0.4.3-SNAPSHOT"]
@@ -16,8 +17,9 @@
                  [flower/flower-integration-gitlab "0.4.3-SNAPSHOT"]
                  [flower/flower-integration-jira "0.4.3-SNAPSHOT"]
                  [flower/flower-integration-tfs "0.4.3-SNAPSHOT"]]
-  :aliases {"test" ["sub" "lint-and-test-all"]
+  :aliases {"test" ["do" ["ancient-all"] ["sub" "lint-and-test-all"]]
             "bump-all" ["do" ["bump-version"] ["sub" "bump-version"]]
+            "ancient-all" ["do" ["ancient"] ["sub" "ancient"]]
             "deploy-all" ["do" ["sub" "deploy" "clojars"] ["deploy" "clojars"]]}
   :sub ["flower-proto"
         "flower-common"
