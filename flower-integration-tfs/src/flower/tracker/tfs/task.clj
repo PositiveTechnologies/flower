@@ -124,7 +124,7 @@
                                       :task-state :System.State
                                       :task-tags :System.Tags
                                       :task-description :System.Description})
-        fields-without-tracker (dissoc fields :tracker :task-comments-future)
+        fields-without-tracker (dissoc fields :tracker :task-related-future :task-comments-future)
         new-task-id (get (tfs.common/set-tfs-workitem-inner! tracker task-id fields-without-tracker) :id)]
     (when common/*behavior-implicit-cache-cleaning*
       (tfs.common/get-tfs-workitems-inner-clear-cache!)
