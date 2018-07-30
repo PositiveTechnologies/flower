@@ -11,6 +11,7 @@
 ;; Private declarations
 ;;
 
+(declare private-get-tfs-workitem-relations)
 (declare private-get-tfs-workitem-comments)
 (declare private-set-tfs-workitem!)
 (declare private-get-tfs-workitem-url)
@@ -27,13 +28,16 @@
   (get-text [tracker-task-comment] comment-text))
 
 
-(defrecord TFSTrackerTask [tracker task-id task-title task-type task-state task-tags task-description task-comments-future]
+(defrecord TFSTrackerTask [tracker task-id task-title task-type task-state task-tags task-description task-related-future task-comments-future]
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
   (get-task-url [tracker-task] (private-get-tfs-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
+  (get-related-tasks [tracker-task] (apply concat (vals @task-related-future)))
+  (get-related-tasks [tracker-task relation-type] (get @task-related-future relation-type))
+  (get-related-task-types [tracker-task] (keys @task-related-future))
   (get-comments [tracker-task] @task-comments-future)
   (upsert! [tracker-task] (private-set-tfs-workitem! tracker-task)))
 
@@ -57,10 +61,29 @@
             :task-tags (filter (complement empty?)
                                (string/split (get fields :System.Tags "") #"; "))
             :task-description (get fields :System.Description)
+            :task-related-future (macros/future-or-delay (private-get-tfs-workitem-relations tracker %))
             :task-comments-future (macros/future-or-delay (private-get-tfs-workitem-comments tracker %))}))
        (if (string? query)
          (tfs.common/get-tfs-query-inner tracker query)
          (tfs.common/get-tfs-workitems-inner tracker query))))
+
+
+(defn- private-get-tfs-workitem-relations [tracker workitem-inner]
+  (let [relations (get workitem-inner :relations)]
+    (reduce (fn [acc relation]
+              (let [{task-url :url
+                     relation-type :rel} relation]
+                (if task-url
+                  (let [task-id (last (clojure.string/split task-url #"/"))]
+                    (update acc relation-type (fn [acc workitem]
+                                                (if workitem
+                                                  (conj acc workitem)
+                                                  acc))
+                            (binding [common/*behavior-do-long-operations-in-parallel* false]
+                              (first (private-get-tfs-workitems tracker [task-id])))))
+                  acc)))
+            {}
+            relations)))
 
 
 (defn- private-get-tfs-workitem-comments [tracker workitem-inner]

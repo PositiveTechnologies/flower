@@ -60,7 +60,8 @@
 
 (defn- private-get-tfs-workitems-inner [tracker task-ids]
   (if-not (empty? (filter identity task-ids))
-    (let [query-string {:ids (clojure.string/join "," task-ids)}]
+    (let [query-string {:ids (clojure.string/join "," task-ids)
+                        :$expand "relations"}]
       (with-tfs-function tracker false ("/_apis/wit/workitems") query-string :value
         result))))
 

@@ -33,6 +33,9 @@
   (get-task-url [tracker-task] (private-get-github-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
+  (get-related-tasks [tracker-task] (list))
+  (get-related-tasks [tracker-task relation-type] (list))
+  (get-related-task-types [tracker-task] (list))
   (get-comments [tracker-task] @task-comments-future)
   (upsert! [tracker-task] (private-set-github-workitem! tracker-task)))
 

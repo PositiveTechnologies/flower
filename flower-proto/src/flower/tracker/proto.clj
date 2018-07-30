@@ -25,6 +25,10 @@
   (get-tracker [tracker-task])
   (get-state [tracker-task])
   (get-type [tracker-task])
+  (get-related-tasks
+    [tracker-task]
+    [tracker-task relation-type])
+  (get-related-task-types [tracker-task])
   (get-comments [tracker-task])
   (upsert! [tracker-task]))
 

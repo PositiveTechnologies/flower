@@ -10,6 +10,7 @@
 ;; Private declarations
 ;;
 
+(declare private-get-jira-workitem-relations)
 (declare private-get-jira-workitem-comments)
 (declare private-set-jira-workitem!)
 (declare private-get-jira-workitem-url)
@@ -26,13 +27,16 @@
   (get-text [tracker-task-comment] comment-text))
 
 
-(defrecord JiraTrackerTask [tracker task-id task-title task-type task-state task-tags task-description task-comments-future]
+(defrecord JiraTrackerTask [tracker task-id task-title task-type task-state task-tags task-description task-related-future task-comments-future]
   proto/TrackerTaskProto
   (get-tracker [tracker-task] tracker)
   (get-task-id [tracker-task] task-id)
   (get-task-url [tracker-task] (private-get-jira-workitem-url tracker-task))
   (get-state [tracker-task] task-state)
   (get-type [tracker-task] task-type)
+  (get-related-tasks [tracker-task] (apply concat (vals @task-related-future)))
+  (get-related-tasks [tracker-task relation-type] (get @task-related-future relation-type))
+  (get-related-task-types [tracker-task] (keys @task-related-future))
   (get-comments [tracker-task] @task-comments-future)
   (upsert! [tracker-task] (private-set-jira-workitem! tracker-task)))
 
@@ -56,12 +60,30 @@
           :task-state (.getName (.getStatus %))
           :task-tags (.getLabels %)
           :task-description (.getDescription %)
+          :task-related-future (macros/future-or-delay (private-get-jira-workitem-relations tracker %))
           :task-comments-future (macros/future-or-delay (private-get-jira-workitem-comments tracker %))})
        (if (string? query)
          (jira.common/get-jira-query-inner tracker query)
          (if (empty? query)
            (jira.common/get-jira-query-inner tracker (str "project=\"" (proto/get-project-name tracker) "\""))
            (jira.common/get-jira-workitems-inner tracker query)))))
+
+
+(defn- private-get-jira-workitem-relations [tracker workitem-inner]
+  (let [relations (.getIssueLinks workitem-inner)]
+    (reduce (fn [acc relation]
+              (let [task-id (.getTargetIssueKey relation)
+                    relation-type (some-> relation
+                                          .getIssueLinkType
+                                          .getName)]
+                (update acc relation-type (fn [acc workitem]
+                                            (if workitem
+                                              (conj acc workitem)
+                                              acc))
+                        (binding [common/*behavior-do-long-operations-in-parallel* false]
+                          (first (private-get-jira-workitems tracker [task-id]))))))
+            {}
+            relations)))
 
 
 (defn- private-get-jira-workitem-comments [tracker workitem-inner]
