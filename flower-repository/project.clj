@@ -13,7 +13,7 @@
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [com.stuartsierra/component "0.3.2"]
-                 [tesser.core "1.0.2"]
+                 [tesser.core "1.0.3"]
                  [flower/flower-common "0.4.3-SNAPSHOT"]
                  [flower/flower-proto "0.4.3-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
