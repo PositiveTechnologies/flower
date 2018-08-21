@@ -1,3 +1,9 @@
+# 0.4.3 - 2018-08-21
+
+- Added ability to get related tasks in task trackers.
+- Fixed task upsertion for TFS tracker.
+- Upgraded dependencies.
+
 # 0.4.2 - 2018-06-18
 
 - Implemented comments getting for tasks in task trackers.

@@ -32,7 +32,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.4.2"]
+    [flower "0.4.3"]
 
 Or use the [Leiningen](https://leiningen.org/) template to build a new application from scratch:
 
@@ -111,7 +111,8 @@ Activate `Flower` with:
 Check out `Flower` recipes in the [Cookbook](https://github.com/PositiveTechnologies/flower/wiki/2.-Cookbook):
 
 1. [Emacs](https://github.com/PositiveTechnologies/flower/wiki/2.1.-Emacs)
-2. More to be done...
+2. [Scenarios](https://github.com/PositiveTechnologies/flower/wiki/2.2.-Scenarios)
+3. More to be done...
 
 ## License
 
