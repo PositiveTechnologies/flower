@@ -14,7 +14,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/data.json "0.2.6"]
                  [joda-time/joda-time "2.10"]
-                 [clj-http "3.9.0"]
+                 [clj-http "3.9.1"]
                  [clj-time "0.14.4"]
                  [flower/flower-common "0.4.3-SNAPSHOT"]
                  [flower/flower-proto "0.4.3-SNAPSHOT"]]
