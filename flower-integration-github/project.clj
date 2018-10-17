@@ -15,7 +15,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [com.google.code.gson/gson "2.8.5"]
                  [org.eclipse.mylyn.github/org.eclipse.egit.github.core "4.9.0.201710071750-r"]
-                 [clj-time "0.14.4"]
+                 [clj-time "0.15.0"]
                  [flower/flower-common "0.4.4-SNAPSHOT"]
                  [flower/flower-proto "0.4.4-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}

@@ -9,6 +9,7 @@
   (get-tracker-component [tracker])
   (tracker-name-only [tracker])
   (get-tracker-type [tracker])
+  (get-namespace [tracker])
   (get-project-name [tracker])
   (get-projects [tracker])
   (get-tasks

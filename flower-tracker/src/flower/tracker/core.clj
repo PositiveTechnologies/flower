@@ -22,13 +22,23 @@
   (into {}
         (map (fn [[tracker-name {tracker-type :tracker-type
                                  tracker-url :tracker-url
+                                 tracker-ns :tracker-ns
                                  tracker-projects :tracker-projects}]]
                (let [tracker-projects-list (or tracker-projects (list nil))
                      tracker-pair [tracker-name (map #((resolver/resolve-implementation tracker-type :tracker)
-                                                       {:tracker-component tracker-component
-                                                        :tracker-name tracker-name
-                                                        :tracker-url tracker-url
-                                                        :tracker-project %})
+                                                       (let [[tracker-project & tracker-reversed-ns] (-> %
+                                                                                                         (clojure.string/split #"/")
+                                                                                                         reverse)
+                                                             tracker-ns (if tracker-reversed-ns
+                                                                          (->> tracker-reversed-ns
+                                                                               reverse
+                                                                               (clojure.string/join #"/"))
+                                                                          tracker-ns)]
+                                                         {:tracker-component tracker-component
+                                                          :tracker-name tracker-name
+                                                          :tracker-url tracker-url
+                                                          :tracker-ns tracker-ns
+                                                          :tracker-project tracker-project}))
                                                      tracker-projects-list)]]
                  tracker-pair))
              trackers)))
@@ -40,6 +50,7 @@
 
 (def ^:dynamic *tracker-type* nil)
 (def ^:dynamic *tracker-url* nil)
+(def ^:dynamic *tracker-ns* nil)
 (def ^:dynamic *tracker-project* nil)
 
 
@@ -50,6 +61,11 @@
 
 (defmacro with-tracker-url [tracker-url & body]
   `(binding [flower.tracker.core/*tracker-url* ~tracker-url]
+     ~@body))
+
+
+(defmacro with-tracker-ns [tracker-ns & body]
+  `(binding [flower.tracker.core/*tracker-ns* ~tracker-ns]
      ~@body))
 
 
@@ -69,13 +85,19 @@
         tracker-path-first-and-second (string/join "/" (take 3 tracker-path-components))
         tracker-path-second (first (drop 2 tracker-path-components))
         tracker-path-third (first (drop 3 tracker-path-components))
-        tracker-path-last (last tracker-path-components)]
+        tracker-path-second-and-third (->> tracker-path-components
+                                           (drop 2)
+                                           (take 2)
+                                           (string/join "/"))
+        tracker-path-last (last tracker-path-components)
+        tracker-project (string/join "/" (rest tracker-path-components))]
     (cond (or (= tracker-domain "github.com")
               (= *tracker-type* :github)) {:tracker-type :github
                                            :tracker-url (or *tracker-url*
                                                             (str (assoc tracker-url
                                                                         :path tracker-path-first)))
-                                           :tracker-projects [(or *tracker-project* tracker-path-second)]
+                                           :tracker-ns *tracker-ns*
+                                           :tracker-projects [(or *tracker-project* tracker-project)]
                                            :tracker-name (keyword (str "github-" tracker-domain "-" (or *tracker-project*
                                                                                                         tracker-path-second)))}
           (or (.contains tracker-domain "gitlab")
@@ -83,15 +105,17 @@
                                            :tracker-url (or *tracker-url*
                                                             (str (assoc tracker-url
                                                                         :path "")))
-                                           :tracker-projects [(or *tracker-project* tracker-path-second)]
+                                           :tracker-ns *tracker-ns*
+                                           :tracker-projects [(or *tracker-project* tracker-project)]
                                            :tracker-name (keyword (str "gitlab-" tracker-domain "-" (or *tracker-project*
-                                                                                                        tracker-path-second)))}
+                                                                                                        tracker-path-last)))}
           (or (.contains tracker-domain "tfs")
               (= *tracker-type* :tfs)) {:tracker-type :tfs
                                         :tracker-url (or *tracker-url*
                                                          (str (assoc tracker-url
                                                                      :path tracker-path-first-and-second)))
-                                        :tracker-projects [(or *tracker-project* tracker-path-third)]
+                                        :tracker-ns *tracker-ns*
+                                        :tracker-projects [(or *tracker-project* tracker-path-second-and-third)]
                                         :tracker-name (keyword (str "tfs-" tracker-domain "-" (or *tracker-project*
                                                                                                   tracker-path-third)))}
           (or (.contains tracker-domain "jira")
@@ -99,6 +123,7 @@
                                          :tracker-url (or *tracker-url*
                                                           (str (assoc tracker-url
                                                                       :path "")))
+                                         :tracker-ns *tracker-ns*
                                          :tracker-projects [(or *tracker-project* tracker-path-second)]
                                          :tracker-name (keyword (str "jira-" tracker-domain "-" (or *tracker-project*
                                                                                                     tracker-path-second)))}

@@ -18,11 +18,12 @@
 ;; Public definitions
 ;;
 
-(defrecord JiraTracker [tracker-component tracker-name tracker-url tracker-project]
+(defrecord JiraTracker [tracker-component tracker-name tracker-url tracker-ns tracker-project]
   proto/TrackerProto
   (get-tracker-component [tracker] tracker-component)
   (tracker-name-only [tracker] (private-tracker-name-only tracker-name tracker-url))
   (get-tracker-type [tracker] :jira)
+  (get-namespace [tracker] tracker-ns)
   (get-project-name [tracker] tracker-project)
   (get-projects [tracker] (private-get-projects tracker tracker-name tracker-url))
   (get-tasks [tracker] (private-get-tasks tracker nil))
@@ -37,13 +38,14 @@
 ;;
 
 (defn- private-tracker-name-only [tracker-name tracker-url]
-  (->JiraTracker nil tracker-name tracker-url nil))
+  (->JiraTracker nil tracker-name tracker-url nil nil))
 
 
 (defn- private-get-projects [tracker tracker-name tracker-url]
   (map #(map->JiraTracker {:tracker-component (proto/get-tracker-component tracker)
                            :tracker-name tracker-name
                            :tracker-url tracker-url
+                           :tracker-ns nil
                            :tracker-project (.getKey %)})
 
        (common/get-jira-projects-inner tracker)))

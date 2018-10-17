@@ -17,10 +17,11 @@
 ;; Public definitions
 ;;
 
-(defrecord GithubRepository [repository-component repo-name repo-url repo-project]
+(defrecord GithubRepository [repository-component repo-name repo-url repo-ns repo-project]
   proto/RepositoryProto
   (get-repository-component [repository] repository-component)
   (repository-name-only [repository] (private-repository-name-only repository repo-name repo-url))
+  (get-namespace [repository] repo-ns)
   (get-project-name [repository] repo-project)
   (get-projects [repository] (private-get-projects repository repo-name repo-url))
   (get-pull-requests [repository] (private-get-pull-requests repository repo-project {}))
@@ -37,6 +38,7 @@
   (map->GithubRepository {:repository-component (proto/get-repository-component repository)
                           :repo-name repo-name
                           :repo-url repo-url
+                          :repo-ns nil
                           :repo-project nil}))
 
 
@@ -44,6 +46,7 @@
   (map #(map->GithubRepository {:repository-component (proto/get-repository-component repository)
                                 :repo-name repo-name
                                 :repo-url repo-url
+                                :repo-ns (.getName (.getOwner %))
                                 :repo-project (.getName %)})
        (common/get-github-projects-inner repository)))
 

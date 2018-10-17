@@ -2,7 +2,7 @@
   (:require [flower.macros :as macros]
             [flower.tracker.proto :as proto])
   (:import (java.net URI)
-           (com.atlassian.util.concurrent Promises)
+           (io.atlassian.util.concurrent Promises)
            (com.atlassian.jira.rest.client.internal.async AsynchronousHttpClientFactory
                                                           AsynchronousJiraRestClient)
            (com.atlassian.jira.rest.client.auth BasicHttpAuthenticationHandler)

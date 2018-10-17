@@ -18,9 +18,9 @@
                  [joda-time/joda-time "2.10"]
                  [org.slf4j/slf4j-api "1.7.25"]
                  [com.atlassian.fugue/fugue "2.7.0"]
-                 [com.atlassian.jira/jira-rest-java-client-core "5.0.4"]
-                 [com.atlassian.jira/jira-rest-java-client-api "5.0.4"]
-                 [clj-time "0.14.4"]
+                 [com.atlassian.jira/jira-rest-java-client-core "5.1.0"]
+                 [com.atlassian.jira/jira-rest-java-client-api "5.1.0"]
+                 [clj-time "0.15.0"]
                  [flower/flower-common "0.4.4-SNAPSHOT"]
                  [flower/flower-proto "0.4.4-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}

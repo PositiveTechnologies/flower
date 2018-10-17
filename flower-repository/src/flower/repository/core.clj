@@ -31,13 +31,23 @@
   (into {}
         (map (fn [[repo-name {repo-type :repo-type
                               repo-url :repo-url
+                              repo-ns :repo-ns
                               repo-projects :repo-projects}]]
                (let [repo-projects-list (or repo-projects (list nil))]
                  [repo-name (map #((resolver/resolve-implementation repo-type :repository)
-                                   {:repository-component repository-component
-                                    :repo-name repo-name
-                                    :repo-url repo-url
-                                    :repo-project %})
+                                   (let [[repo-project & repo-reversed-ns] (-> %
+                                                                               (clojure.string/split #"/")
+                                                                               reverse)
+                                         repo-ns (if repo-reversed-ns
+                                                   (->> repo-reversed-ns
+                                                        reverse
+                                                        (clojure.string/join #"/"))
+                                                   repo-ns)]
+                                     {:repository-component repository-component
+                                      :repo-name repo-name
+                                      :repo-url repo-url
+                                      :repo-ns repo-ns
+                                      :repo-project repo-project}))
                                  repo-projects-list)]))
              repos)))
 
@@ -48,6 +58,7 @@
 
 (def ^:dynamic *repository-type* nil)
 (def ^:dynamic *repository-url* nil)
+(def ^:dynamic *repository-ns* nil)
 (def ^:dynamic *repository-project* nil)
 
 
@@ -58,6 +69,11 @@
 
 (defmacro with-repository-url [repository-url & body]
   `(binding [flower.repository.core/*repository-url* ~repository-url]
+     ~@body))
+
+
+(defmacro with-repository-ns [repository-ns & body]
+  `(binding [flower.repository.core/*repository-ns* ~repository-ns]
      ~@body))
 
 
@@ -76,13 +92,15 @@
         repository-path-first (string/join "/" (take 2 repository-path-components))
         repository-path-second (first (drop 2 repository-path-components))
         repository-path-third (first (drop 3 repository-path-components))
-        repository-path-last (last repository-path-components)]
+        repository-path-last (last repository-path-components)
+        repository-project (string/join "/" (rest repository-path-components))]
     (cond (or (= repository-domain "github.com")
               (= *repository-type* :github)) {:repo-type :github
                                               :repo-url (or *repository-url*
                                                             (str (assoc repository-url
                                                                         :path repository-path-first)))
-                                              :repo-projects [(or *repository-project* repository-path-second)]
+                                              :repository-ns *repository-ns*
+                                              :repo-projects [(or *repository-project* repository-project)]
                                               :repo-name (keyword (str "github-" repository-domain "-" (or *repository-project*
                                                                                                            repository-path-second)))}
           (or (.contains repository-domain "gitlab")
@@ -90,7 +108,8 @@
                                               :repo-url (or *repository-url*
                                                             (str (assoc repository-url
                                                                         :path "")))
-                                              :repo-projects [(or *repository-project* repository-path-second)]
+                                              :repository-ns *repository-ns*
+                                              :repo-projects [(or *repository-project* repository-project)]
                                               :repo-name (keyword (str "gitlab-" repository-domain "-" (or *repository-project*
                                                                                                            repository-path-second)))}
           :else (merge {:repo-type (or *repository-type* :default)

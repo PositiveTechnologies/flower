@@ -8,6 +8,7 @@
 (defprotocol RepositoryProto
   (get-repository-component [repository])
   (repository-name-only [repository])
+  (get-namespace [repository])
   (get-project-name [repository])
   (get-projects [repository])
   (get-pull-requests
