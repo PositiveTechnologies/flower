@@ -2,10 +2,8 @@
   (:require [flower.macros :as macros]
             [flower.tracker.proto :as proto])
   (:import (java.net URI)
-           (io.atlassian.util.concurrent Promises)
-           (com.atlassian.jira.rest.client.internal.async AsynchronousHttpClientFactory
-                                                          AsynchronousJiraRestClient)
-           (com.atlassian.jira.rest.client.auth BasicHttpAuthenticationHandler)
+           (com.atlassian.util.concurrent Promises)
+           (com.atlassian.jira.rest.client.internal.async AsynchronousJiraRestClientFactory)
            (com.atlassian.jira.rest.client.api.domain IssueFieldId)
            (com.atlassian.jira.rest.client.api.domain.input IssueInputBuilder
                                                             TransitionInput)))
@@ -40,12 +38,10 @@
                    password (get auth :jira-password)]
                (private-get-jira-conn-inner tracker login password)))
   ([tracker login password] (let [tracker-uri (new URI (:tracker-url tracker))
-                                  basic-auth (new BasicHttpAuthenticationHandler login password)
-                                  http-client (.createClient (new AsynchronousHttpClientFactory)
-                                                             tracker-uri
-                                                             basic-auth)
-                                  jira-conn (AsynchronousJiraRestClient. tracker-uri
-                                                                         http-client)]
+                                  jira-conn (.createWithBasicHttpAuthentication (AsynchronousJiraRestClientFactory.)
+                                                                                tracker-uri
+                                                                                login
+                                                                                password)]
                               jira-conn)))
 
 
@@ -79,10 +75,20 @@
 
 
 (defn- private-get-jira-workitems-inner [tracker task-ids]
-  (let [issue-client (.getIssueClient (get-jira-conn-inner tracker))]
-    (-> (Promises/when (map #(.getIssue issue-client %)
-                            (filter identity task-ids)))
-        (.claim))))
+  (let [issue-client (.getIssueClient (get-jira-conn-inner tracker))
+        skip-on-exception (get (proto/get-tracker-component tracker) :skip-on-exception true)]
+    (try
+      (-> (Promises/when (filter identity
+                                 (map #(try
+                                         (.getIssue issue-client %)
+                                         (catch Exception e
+                                           (when-not skip-on-exception
+                                             (throw e))))
+                                      (filter identity task-ids))))
+          (.claim))
+      (catch Exception e
+        (when-not skip-on-exception
+          (throw e))))))
 
 
 (defn- private-get-jira-query-inner [tracker query]
