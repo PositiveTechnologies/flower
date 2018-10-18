@@ -59,21 +59,14 @@ using `flower.macros/without-implicit-cache` macro or call `(function-name-clear
 ### For the impatient
 
 ```clj
-(require '[clojure.string])
-(require '[flower.tracker.core :as tracker.core]
-         '[flower.tracker.proto :as tracker.proto])
+(require 'flower.tracker.core)
 
 ;; Print all opened tasks in our task tracker
-(loop [[task & other-tasks] (-> "https://github.com/PositiveTechnologies/flower"
-                                (tracker.core/get-tracker)
-                                (tracker.proto/get-tasks))]
-  (if task
-    (let [task-parts (-> task
-                         (select-keys [:task-type :task-id :task-title])
-                         (vals))
-          task-string (clojure.string/join " " task-parts)]
-      (println task-string)
-      (recur other-tasks))))
+(let [url "https://github.com/PositiveTechnologies/flower"]
+  (doall (map (comp (partial apply println)
+                    (juxt :task-type :task-id :task-title))
+              (.get-tasks (flower.tracker.core/get-tracker url))))
+  nil)
 ```
 
 ### For Emacs users
