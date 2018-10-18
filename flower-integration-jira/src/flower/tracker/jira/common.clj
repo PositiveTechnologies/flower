@@ -117,29 +117,31 @@
         task-type (get fields :task-type)
         workitem-inner (first (get-jira-workitems-inner tracker [task-id]))
         workitem-input-builder (doto (IssueInputBuilder.)
-                                 (.setProject (get-jira-project-inner tracker))
-                                 (.setIssueType (get-jira-issue-type-inner tracker
-                                                                           task-type)))]
-    (if (and workitem-inner
-             (contains? fields :task-state))
+                                 (.setProject (get-jira-project-inner tracker)))]
+    (when (and workitem-inner
+               (contains? fields :task-state))
       (let [transitions (-> issue-client
                             (.getTransitions workitem-inner)
                             (.claim))
             transition (first (filter #(= (get fields :task-state)
                                           (.getName %))
                                       transitions))]
-        (if transition
+        (when transition
           (-> issue-client
               (.transition workitem-inner
                            (TransitionInput. (.getId transition) nil))
               (.claim)))))
-    (if (contains? fields :task-title)
+    (when (contains? fields :task-title)
       (.setSummary workitem-input-builder (get fields :task-title)))
-    (if (contains? fields :task-description)
+    (when (contains? fields :task-type)
+      (.setIssueType workitem-input-builder
+                     (get-jira-issue-type-inner tracker
+                                                (get fields :task-type))))
+    (when (contains? fields :task-description)
       (.setDescription workitem-input-builder (get fields :task-description)))
-    (if (contains? fields :task-assignee)
+    (when (contains? fields :task-assignee)
       (.setAssigneeName workitem-input-builder (get fields :task-assignee)))
-    (if (contains? fields :task-tags)
+    (when (contains? fields :task-tags)
       (.setFieldValue workitem-input-builder
                       (.id IssueFieldId/LABELS_FIELD)
                       (get fields :task-tags)))
