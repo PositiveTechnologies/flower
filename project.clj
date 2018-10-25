@@ -1,4 +1,4 @@
-(defproject flower "0.4.5"
+(defproject flower "0.4.6-SNAPSHOT"
   :description "Flower is a library for integration with task trackers, repositories, messaging systems and more"
   :url "http://github.com/PositiveTechnologies/flower"
   :license {:name "MIT License"
@@ -7,16 +7,16 @@
             [lein-ancient "0.6.15"]
             [lein-bump-version "0.1.6"]]
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [flower/flower-tracker "0.4.5"]
-                 [flower/flower-repository "0.4.5"]
-                 [flower/flower-messaging "0.4.5"]
-                 [flower/flower-team "0.4.5"]
-                 [flower/flower-utilities "0.4.5"]
-                 [flower/flower-integration-default "0.4.5"]
-                 [flower/flower-integration-github "0.4.5"]
-                 [flower/flower-integration-gitlab "0.4.5"]
-                 [flower/flower-integration-jira "0.4.5"]
-                 [flower/flower-integration-tfs "0.4.5"]]
+                 [flower/flower-tracker "0.4.6-SNAPSHOT"]
+                 [flower/flower-repository "0.4.6-SNAPSHOT"]
+                 [flower/flower-messaging "0.4.6-SNAPSHOT"]
+                 [flower/flower-team "0.4.6-SNAPSHOT"]
+                 [flower/flower-utilities "0.4.6-SNAPSHOT"]
+                 [flower/flower-integration-default "0.4.6-SNAPSHOT"]
+                 [flower/flower-integration-github "0.4.6-SNAPSHOT"]
+                 [flower/flower-integration-gitlab "0.4.6-SNAPSHOT"]
+                 [flower/flower-integration-jira "0.4.6-SNAPSHOT"]
+                 [flower/flower-integration-tfs "0.4.6-SNAPSHOT"]]
   :aliases {"test" ["do" ["ancient-all"] ["sub" "lint-and-test-all"]]
             "bump-all" ["do" ["bump-version"] ["sub" "bump-version"]]
             "ancient-all" ["do" ["ancient"] ["sub" "ancient"]]

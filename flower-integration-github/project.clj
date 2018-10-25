@@ -1,4 +1,4 @@
-(defproject flower/flower-integration-github "0.4.5"
+(defproject flower/flower-integration-github "0.4.6-SNAPSHOT"
   :description "Flower integration with GitHub"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -16,7 +16,7 @@
                  [com.google.code.gson/gson "2.8.5"]
                  [org.eclipse.mylyn.github/org.eclipse.egit.github.core "4.9.0.201710071750-r"]
                  [clj-time "0.15.1"]
-                 [flower/flower-common "0.4.5"]
-                 [flower/flower-proto "0.4.5"]]
+                 [flower/flower-common "0.4.6-SNAPSHOT"]
+                 [flower/flower-proto "0.4.6-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})
