@@ -32,7 +32,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.4.3"]
+    [flower "0.4.4"]
 
 Or use the [Leiningen](https://leiningen.org/) template to build a new application from scratch:
 
@@ -98,6 +98,12 @@ Activate `Flower` with:
 2. [Authentication](https://github.com/PositiveTechnologies/flower/wiki/1.2.-Authentication)
 3. [Repositories](https://github.com/PositiveTechnologies/flower/wiki/1.3.-Repositories)
 4. [Messaging](https://github.com/PositiveTechnologies/flower/wiki/1.4.-Messaging)
+
+### Videos and articles
+
+1. Article: [Xakep - Useful Functional Approach. Grabbing Mail, Task Trackers and Repositories with Clojure (in Russian)](https://xakep.ru/2018/08/24/clojure-flower/)
+2. Video: [Team Leader Meetup - Software Development Automation Panel Discussion (in Russian)](https://youtu.be/y1EJTkuCEmk?t=1714)
+3. Video: [Software Development Management Automation using Clojure (in Russian)](https://youtu.be/fZuyfjlZO0o)
 
 ## Cookbook
 

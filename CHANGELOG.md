@@ -1,3 +1,10 @@
+# 0.4.4 - 2018-10-25
+
+- Added namespaces for task trackers and repositories.
+- Added ability to skip unexistent issues for Jira task tracker.
+- Simplified Leiningen template and README sample code.
+- Fixed unconditional issue type setting for Jira.
+
 # 0.4.3 - 2018-08-21
 
 - Added ability to get related tasks in task trackers.
