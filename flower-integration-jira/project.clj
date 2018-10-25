@@ -1,4 +1,4 @@
-(defproject flower/flower-integration-jira "0.4.4"
+(defproject flower/flower-integration-jira "0.4.5"
   :description "Flower integration with Atlassian Jira"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -20,8 +20,8 @@
                  [com.atlassian.fugue/fugue "2.6.1" :upgrade false]
                  [com.atlassian.jira/jira-rest-java-client-core "5.0.4" :upgrade false]
                  [com.atlassian.jira/jira-rest-java-client-api "5.0.4" :upgrade false]
-                 [clj-time "0.15.0"]
-                 [flower/flower-common "0.4.4"]
-                 [flower/flower-proto "0.4.4"]]
+                 [clj-time "0.15.1"]
+                 [flower/flower-common "0.4.5"]
+                 [flower/flower-proto "0.4.5"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

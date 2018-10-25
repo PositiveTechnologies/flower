@@ -1,4 +1,4 @@
-(defproject flower/flower-integration-gitlab "0.4.4"
+(defproject flower/flower-integration-gitlab "0.4.5"
   :description "Flower integration with GitLab"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -15,8 +15,8 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [joda-time/joda-time "2.10"]
                  [org.gitlab/java-gitlab-api "4.1.0"]
-                 [clj-time "0.15.0"]
-                 [flower/flower-common "0.4.4"]
-                 [flower/flower-proto "0.4.4"]]
+                 [clj-time "0.15.1"]
+                 [flower/flower-common "0.4.5"]
+                 [flower/flower-proto "0.4.5"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

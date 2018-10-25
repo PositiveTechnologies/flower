@@ -1,4 +1,4 @@
-(defproject flower/flower-utilities "0.4.4"
+(defproject flower/flower-utilities "0.4.5"
   :description "Flower utilities for integation with Emacs"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -15,6 +15,6 @@
                  [org.clojure/core.memoize "0.7.1"]
                  [com.orgzly/org-java "1.2.2"]
                  [org.jsoup/jsoup "1.11.3"]
-                 [flower/flower-tracker "0.4.4"]]
+                 [flower/flower-tracker "0.4.5"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})
