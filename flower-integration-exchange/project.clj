@@ -15,7 +15,7 @@
   :repositories {"atlassian-public" "https://maven.atlassian.com/content/repositories/atlassian-public/"
                  "sonatype" "https://oss.sonatype.org/content/repositories/releases"}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/core.async "0.4.474"]
+                 [org.clojure/core.async "0.4.490"]
                  [com.microsoft.ews-java-api/ews-java-api "2.0"]
                  [flower/flower-common "0.4.6-SNAPSHOT"]
                  [flower/flower-proto "0.4.6-SNAPSHOT"]]

@@ -13,7 +13,7 @@
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/data.json "0.2.6"]
-                 [joda-time/joda-time "2.10"]
+                 [joda-time/joda-time "2.10.1"]
                  [clj-http "3.9.1"]
                  [clj-time "0.15.1"]
                  [flower/flower-common "0.4.6-SNAPSHOT"]

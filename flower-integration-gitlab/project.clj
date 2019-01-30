@@ -13,7 +13,7 @@
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :repositories {"sonatype" "https://oss.sonatype.org/content/repositories/releases"}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [joda-time/joda-time "2.10"]
+                 [joda-time/joda-time "2.10.1"]
                  [org.gitlab/java-gitlab-api "4.1.0"]
                  [clj-time "0.15.1"]
                  [flower/flower-common "0.4.6-SNAPSHOT"]

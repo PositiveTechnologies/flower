@@ -12,10 +12,10 @@
             "test-all" ["with-profile" "default:+1.7:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/core.async "0.4.474"]
+                 [org.clojure/core.async "0.4.490"]
                  [org.clojure/data.json "0.2.6"]
-                 [org.julienxx/clj-slack "0.5.6"]
-                 [stylefruits/gniazdo "1.1.0"]
+                 [org.julienxx/clj-slack "0.6.2"]
+                 [stylefruits/gniazdo "1.1.1"]
                  [flower/flower-common "0.4.6-SNAPSHOT"]
                  [flower/flower-proto "0.4.6-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}

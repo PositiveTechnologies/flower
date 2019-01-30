@@ -12,7 +12,7 @@
             "test-all" ["with-profile" "default:+1.7:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [com.stuartsierra/component "0.3.2"]
+                 [com.stuartsierra/component "0.4.0"]
                  [flower/flower-common "0.4.6-SNAPSHOT"]
                  [flower/flower-proto "0.4.6-SNAPSHOT"]]
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}

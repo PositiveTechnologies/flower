@@ -15,7 +15,7 @@
                  "eclipse-releases" "https://repo.eclipse.org/content/groups/releases/"}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.memoize "0.7.1"]
-                 [joda-time/joda-time "2.10"]
+                 [joda-time/joda-time "2.10.1"]
                  [org.slf4j/slf4j-api "1.7.25"]
                  [com.atlassian.fugue/fugue "2.6.1" :upgrade false]
                  [com.atlassian.jira/jira-rest-java-client-core "5.0.4" :upgrade false]
