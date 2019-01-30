@@ -87,17 +87,18 @@
       (tracker.proto/get-task-url task))))
 
 
-(defn get-tasks [tracker-url auth-type query grouping]
-  (let [tracker (get-tracker tracker-url auth-type)
-        tasks (tracker.proto/get-tasks tracker (or query nil))]
-    (apply str
-           (if-not grouping
-             (map (fn [task]
-                    (str "* " (get-task-info-str task false)))
-                  tasks)
-             (map (fn [[key value]]
-                    (str "* " grouping ": \"" key "\"\n"
-                         (apply str (map (fn [task]
-                                           (str "** " (get-task-info-str task false)))
-                                         value))))
-                  (group-by (keyword grouping) tasks))))))
+(defn get-tasks [tracker-url & [auth-type query grouping implicit-cache]]
+  (binding [common/*behavior-implicit-cache* implicit-cache]
+    (let [tracker (get-tracker tracker-url auth-type)
+          tasks (tracker.proto/get-tasks tracker (or query nil))]
+      (apply str
+             (if-not grouping
+               (map (fn [task]
+                      (str "* " (get-task-info-str task false)))
+                    tasks)
+               (map (fn [[key value]]
+                      (str "* " grouping ": \"" key "\"\n"
+                           (apply str (map (fn [task]
+                                             (str "** " (get-task-info-str task false)))
+                                           value))))
+                    (group-by (keyword grouping) tasks)))))))

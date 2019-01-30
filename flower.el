@@ -82,6 +82,12 @@
                  (const :tag "Group by State" "task-state")
                  (const :tag "Group by Assignee" "task-assignee")))
 
+(defcustom flower-tracker-implicit-cache nil
+  "Cache results for each query."
+  :group 'flower
+  :type '(choice (const :tag "No caching" nil)
+                 (const :tag "Cache each query" t)))
+
 (defcustom flower-open-command 'flower-browse-task
   "The Emacs command to be used to display 'flower:' links."
   :group 'flower
@@ -166,7 +172,8 @@ Argument TASK-ID Task identifier."
       (flower-show-buffer (flower-get-tasks flower-tracker
                                             flower-tracker-auth
                                             flower-tracker-query
-                                            flower-tracker-grouping)
+                                            flower-tracker-grouping
+                                            flower-tracker-implicit-cache)
                           t
                           nil)
       (message "Listed all tasks for: %s -> %s" flower-tracker (or flower-tracker-query
