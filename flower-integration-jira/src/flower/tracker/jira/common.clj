@@ -26,6 +26,8 @@
 (macros/public-definition set-jira-workitem-inner!)
 
 
+(def ^:dynamic *jira-search-max-results* 1000)
+
 ;;
 ;; Private definitions
 ;;
@@ -94,7 +96,7 @@
 (defn- private-get-jira-query-inner [tracker query]
   (-> (get-jira-conn-inner tracker)
       (.getSearchClient)
-      (.searchJql query)
+      (.searchJql query (unchecked-int *jira-search-max-results*) nil nil)
       (.claim)
       (.getIssues)))
 
