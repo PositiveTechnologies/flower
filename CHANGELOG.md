@@ -1,3 +1,11 @@
+# 0.4.6 - 2019-02-15
+
+- Disabled implicit cache for Emacs by default.
+- Fixed issue with listing Jira issues.
+- Added support for Clojure 1.10 and dropped for Clojure 1.7.
+- Added initial tests for task trackers and repositories.
+- Updated dependencies.
+
 # 0.4.5 - 2018-10-25
 
 - Added namespaces for task trackers and repositories.

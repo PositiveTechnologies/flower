@@ -1,4 +1,4 @@
-(defproject flower/flower-integration-slack "0.4.6-SNAPSHOT"
+(defproject flower/flower-integration-slack "0.4.6"
   :description "Flower integration with Slack"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -16,7 +16,7 @@
                  [org.clojure/data.json "0.2.6"]
                  [org.julienxx/clj-slack "0.6.2"]
                  [stylefruits/gniazdo "1.1.1"]
-                 [flower/flower-common "0.4.6-SNAPSHOT"]
-                 [flower/flower-proto "0.4.6-SNAPSHOT"]]
+                 [flower/flower-common "0.4.6"]
+                 [flower/flower-proto "0.4.6"]]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

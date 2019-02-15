@@ -32,7 +32,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.4.5"]
+    [flower "0.4.6"]
 
 Or use the [Leiningen](https://leiningen.org/) template to build a new application from scratch:
 
@@ -89,7 +89,7 @@ using `flower.macros/without-implicit-cache` macro or call `(function-name-clear
 
 Activate `Flower` with:
 
-* <kbd>C-c f f</kbd> to view the task list for the current query.
+* <kbd>C-c f f</kbd> to view or update the task list for the current query.
 * <kbd>C-c f t</kbd> to view information on a specific task.
 
 ### For the patient
@@ -115,7 +115,7 @@ Check out `Flower` recipes in the [Cookbook](https://github.com/PositiveTechnolo
 
 ## License
 
-Copyright © 2017-2018 JSC Positive Technologies. All rights reserved.
+Copyright © 2017-2019 JSC Positive Technologies. All rights reserved.
 
 Distributed under the MIT License. See LICENSE.
 
