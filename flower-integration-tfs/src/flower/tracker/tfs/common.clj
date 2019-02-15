@@ -1,5 +1,6 @@
 (ns flower.tracker.tfs.common
   (:require [clj-http.client :as client]
+            [clojure.string :as string]
             [clojure.data.json :as json]
             [flower.macros :as macros]
             [flower.tracker.proto :as proto]))
@@ -60,7 +61,7 @@
 
 (defn- private-get-tfs-workitems-inner [tracker task-ids]
   (if-not (empty? (filter identity task-ids))
-    (let [query-string {:ids (clojure.string/join "," task-ids)
+    (let [query-string {:ids (string/join "," task-ids)
                         :$expand "relations"}]
       (with-tfs-function tracker false ("/_apis/wit/workitems") query-string :value
         result))))

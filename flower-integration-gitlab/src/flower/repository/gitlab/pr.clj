@@ -1,5 +1,6 @@
 (ns flower.repository.gitlab.pr
-  (:require [flower.macros :as macros]
+  (:require [clojure.string :as string]
+            [flower.macros :as macros]
             [flower.repository.proto :as proto]
             [flower.repository.gitlab.common :as common])
   (:import (java.io FileNotFoundException)
@@ -162,7 +163,7 @@
         project-id (.getId project-inner)
         changes (common/get-gitlab-changes-inner repository pull-request)
         flat-list (map (fn [diff]
-                         (let [splitted (clojure.string/split (.getDiff diff) #"\n")
+                         (let [splitted (string/split (.getDiff diff) #"\n")
                                grouped (group-by first splitted)
                                added (count (get grouped \+ []))
                                deleted (count (get grouped \- []))]

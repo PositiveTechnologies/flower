@@ -74,7 +74,7 @@
               (let [{task-url :url
                      relation-type :rel} relation]
                 (if task-url
-                  (let [task-id (last (clojure.string/split task-url #"/"))]
+                  (let [task-id (last (string/split task-url #"/"))]
                     (update acc relation-type (fn [acc workitem]
                                                 (if workitem
                                                   (conj acc workitem)
@@ -107,7 +107,7 @@
   (into {}
         (map (fn [[key value]]
                [key (if (= key :task-tags)
-                      (clojure.string/join "; " (sort value))
+                      (string/join "; " (sort value))
                       value)])
              tags)))
 

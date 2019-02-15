@@ -27,12 +27,12 @@
                (let [tracker-projects-list (or tracker-projects (list nil))
                      tracker-pair [tracker-name (map #((resolver/resolve-implementation tracker-type :tracker)
                                                        (let [[tracker-project & tracker-reversed-ns] (-> %
-                                                                                                         (clojure.string/split #"/")
+                                                                                                         (string/split #"/")
                                                                                                          reverse)
                                                              tracker-ns (if tracker-reversed-ns
                                                                           (->> tracker-reversed-ns
                                                                                reverse
-                                                                               (clojure.string/join #"/"))
+                                                                               (string/join #"/"))
                                                                           tracker-ns)]
                                                          {:tracker-component tracker-component
                                                           :tracker-name tracker-name

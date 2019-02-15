@@ -36,12 +36,12 @@
                (let [repo-projects-list (or repo-projects (list nil))]
                  [repo-name (map #((resolver/resolve-implementation repo-type :repository)
                                    (let [[repo-project & repo-reversed-ns] (-> %
-                                                                               (clojure.string/split #"/")
+                                                                               (string/split #"/")
                                                                                reverse)
                                          repo-ns (if repo-reversed-ns
                                                    (->> repo-reversed-ns
                                                         reverse
-                                                        (clojure.string/join #"/"))
+                                                        (string/join #"/"))
                                                    repo-ns)]
                                      {:repository-component repository-component
                                       :repo-name repo-name

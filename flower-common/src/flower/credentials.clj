@@ -1,5 +1,6 @@
 (ns flower.credentials
   (:require [clojure.java.io :as io]
+            [clojure.string :as string]
             [cprop.core :as cprop]
             [cprop.source]))
 
@@ -9,8 +10,8 @@
 ;;
 
 (def ^:dynamic *credentials-file*
-  (clojure.string/join "/" [(System/getProperty "user.home")
-                            ".credentials.edn"]))
+  (string/join "/" [(System/getProperty "user.home")
+                    ".credentials.edn"]))
 
 
 ;;

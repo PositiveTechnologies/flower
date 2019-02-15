@@ -4,16 +4,16 @@
   :scm {:dir ".."}
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
-  :plugins [[jonase/eastwood "0.2.5"]
+  :plugins [[jonase/eastwood "0.3.5"]
             [lein-cljfmt "0.5.7"]
             [lein-bump-version "0.1.6"]]
   :cljfmt {:remove-consecutive-blank-lines? false}
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
-            "test-all" ["with-profile" "default:+1.7:+1.8" "test"]
+            "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :repositories {"atlassian-public" "https://maven.atlassian.com/content/repositories/atlassian-public/"
                  "eclipse-releases" "https://repo.eclipse.org/content/groups/releases/"}
-  :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/core.memoize "0.7.1"]
                  [joda-time/joda-time "2.10.1"]
                  [org.slf4j/slf4j-api "1.7.25"]
@@ -23,5 +23,5 @@
                  [clj-time "0.15.1"]
                  [flower/flower-common "0.4.6-SNAPSHOT"]
                  [flower/flower-proto "0.4.6-SNAPSHOT"]]
-  :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
+  :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

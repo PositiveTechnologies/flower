@@ -1,5 +1,6 @@
 (ns flower.util.tracker
-  (:require [flower.macros :as macros]
+  (:require [clojure.string :as string]
+            [flower.macros :as macros]
             [flower.common :as common]
             [flower.credentials :as credentials]
             [flower.tracker.core :as tracker.core]
@@ -48,8 +49,8 @@
 
 (defn- replace-title-for-org-mode-links [title]
   (-> title
-      (clojure.string/replace #"\[" "{")
-      (clojure.string/replace #"\]" "}")))
+      (string/replace #"\[" "{")
+      (string/replace #"\]" "}")))
 
 
 (defn- get-task-info-str [task long-version]
