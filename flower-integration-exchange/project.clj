@@ -14,8 +14,8 @@
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :repositories {"atlassian-public" "https://maven.atlassian.com/content/repositories/atlassian-public/"
                  "sonatype" "https://oss.sonatype.org/content/repositories/releases"}
-  :dependencies [[org.clojure/clojure "1.10.0"]
-                 [org.clojure/core.async "0.4.490"]
+  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
+                 [org.clojure/core.async "0.4.500"]
                  [com.microsoft.ews-java-api/ews-java-api "2.0"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]

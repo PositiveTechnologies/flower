@@ -11,13 +11,13 @@
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
             "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
-  :repositories {"atlassian-public" "https://maven.atlassian.com/content/repositories/atlassian-public/"
+  :repositories {"atlassian-public" "https://packages.atlassian.com/repository/public/"
                  "eclipse-releases" "https://repo.eclipse.org/content/groups/releases/"}
-  :dependencies [[org.clojure/clojure "1.10.0"]
-                 [org.clojure/core.memoize "0.7.1"]
-                 [joda-time/joda-time "2.10.1"]
-                 [org.slf4j/slf4j-api "1.7.25"]
-                 [com.atlassian.fugue/fugue "2.6.1" :upgrade false]
+  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
+                 [org.clojure/core.memoize "0.7.2"]
+                 [joda-time/joda-time "2.10.3"]
+                 [org.slf4j/slf4j-api "1.7.26"]
+                 [com.atlassian.fugue/fugue "2.7.0"]
                  [com.atlassian.jira/jira-rest-java-client-core "5.0.4" :upgrade false]
                  [com.atlassian.jira/jira-rest-java-client-api "5.0.4" :upgrade false]
                  [clj-time "0.15.1"]

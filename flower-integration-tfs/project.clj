@@ -11,10 +11,10 @@
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
             "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
-  :dependencies [[org.clojure/clojure "1.10.0"]
+  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [org.clojure/data.json "0.2.6"]
-                 [joda-time/joda-time "2.10.1"]
-                 [clj-http "3.9.1"]
+                 [joda-time/joda-time "2.10.3"]
+                 [clj-http "3.10.0"]
                  [clj-time "0.15.1"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]

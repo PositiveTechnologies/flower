@@ -11,8 +11,8 @@
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
             "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
-  :dependencies [[org.clojure/clojure "1.10.0"]
-                 [org.clojure/core.async "0.4.490"]
+  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
+                 [org.clojure/core.async "0.4.500"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
