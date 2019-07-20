@@ -11,10 +11,10 @@
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
             "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
-  :dependencies [[org.clojure/clojure "1.10.0"]
-                 [org.clojure/core.memoize "0.7.1"]
-                 [com.orgzly/org-java "1.2.2"]
-                 [org.jsoup/jsoup "1.11.3"]
+  :dependencies [[org.clojure/clojure "1.10.1"]
+                 [org.clojure/core.memoize "0.7.2"]
+                 [com.orgzly/org-java "1.2.3"]
+                 [org.jsoup/jsoup "1.12.1"]
                  [flower/flower-tracker "0.4.7-SNAPSHOT"]]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

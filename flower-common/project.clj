@@ -11,11 +11,12 @@
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
             "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
-  :dependencies [[org.clojure/clojure "1.10.0"]
-                 [org.clojure/core.memoize "0.7.1"]
+  :eastwood {:exclude-linters [:suspicious-expression]}
+  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
+                 [org.clojure/core.memoize "0.7.2"]
                  [com.cemerick/pomegranate "1.1.0"]
                  [lambdaisland/uri "1.1.0"]
-                 [cprop "0.1.13"]
+                 [cprop "0.1.14"]
                  [trptcolin/versioneer "0.2.0"]]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})

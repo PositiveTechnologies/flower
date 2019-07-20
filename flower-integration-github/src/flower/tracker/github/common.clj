@@ -74,7 +74,7 @@
                    project-inner (get-github-project-inner tracker)
                    issue-service (IssueService. conn-inner)]
                (.getIssues issue-service project-inner nil)))
-  ([tracker task-ids] (let [task-ids-list (into [] (map #(Integer. %)
+  ([tracker task-ids] (let [task-ids-list (into [] (map #(Integer/valueOf %)
                                                         (filter identity task-ids)))]
                         (into [] (filter (fn [issue]
                                            (.contains task-ids-list (.getNumber issue)))

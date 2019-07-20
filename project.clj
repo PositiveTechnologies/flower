@@ -6,7 +6,7 @@
   :plugins [[lein-sub "0.3.0"]
             [lein-ancient "0.6.15"]
             [lein-bump-version "0.1.6"]]
-  :dependencies [[org.clojure/clojure "1.10.0"]
+  :dependencies [[org.clojure/clojure "1.10.1"]
                  [flower/flower-tracker "0.4.7-SNAPSHOT"]
                  [flower/flower-repository "0.4.7-SNAPSHOT"]
                  [flower/flower-messaging "0.4.7-SNAPSHOT"]
@@ -38,4 +38,4 @@
         "lein-template"]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
-             :dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]]}})
+             :dev {:dependencies [[org.clojure/tools.namespace "0.3.1"]]}})

@@ -12,10 +12,10 @@
             "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :repositories {"eclipse-releases" "https://repo.eclipse.org/content/groups/releases/"}
-  :dependencies [[org.clojure/clojure "1.10.0"]
+  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [com.google.code.gson/gson "2.8.5"]
                  [org.eclipse.mylyn.github/org.eclipse.egit.github.core "4.9.0.201710071750-r"]
-                 [clj-time "0.15.1"]
+                 [clj-time "0.15.2"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
