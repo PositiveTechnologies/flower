@@ -4,7 +4,8 @@
   :scm {:dir ".."}
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
-  :plugins [[jonase/eastwood "0.3.5"]
+  :plugins [[org.clojure/core.unify "0.5.7"]
+            [jonase/eastwood "0.3.11"]
             [lein-cljfmt "0.5.7"]
             [lein-bump-version "0.1.6"]]
   :cljfmt {:remove-consecutive-blank-lines? false}

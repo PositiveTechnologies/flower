@@ -4,7 +4,8 @@
   :scm {:dir ".."}
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
-  :plugins [[jonase/eastwood "0.3.5"]
+  :plugins [[org.clojure/core.unify "0.5.7"]
+            [jonase/eastwood "0.3.11"]
             [lein-cljfmt "0.5.7"]
             [lein-bump-version "0.1.6"]]
   :cljfmt {:remove-consecutive-blank-lines? false}
@@ -12,7 +13,7 @@
             "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
-                 [com.stuartsierra/component "0.4.0"]
+                 [com.stuartsierra/component "1.0.0"]
                  [tesser.core "1.0.3"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]
