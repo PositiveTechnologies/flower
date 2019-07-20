@@ -58,7 +58,7 @@
   ([tracker] (let [conn-inner (get-gitlab-conn-inner tracker)
                    project-inner (get-gitlab-project-inner tracker)]
                (.getIssues conn-inner project-inner)))
-  ([tracker task-ids] (let [task-ids-list (into [] (map #(Integer. %)
+  ([tracker task-ids] (let [task-ids-list (into [] (map #(Integer/valueOf %)
                                                         (filter identity task-ids)))]
                         (into [] (filter (fn [issue]
                                            (.contains task-ids-list (.getIid issue)))
@@ -116,7 +116,7 @@
                     description
                     title
                     action))
-      (let [milestone-id (Integer. 0)
+      (let [milestone-id (Integer/valueOf 0)
             description (get fields :task-description "")
             labels (get fields :task-tags "")
             title (get fields :task-title "")]

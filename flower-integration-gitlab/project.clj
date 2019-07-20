@@ -15,7 +15,7 @@
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [joda-time/joda-time "2.10.3"]
                  [org.gitlab/java-gitlab-api "4.1.0"]
-                 [clj-time "0.15.1"]
+                 [clj-time "0.15.2"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}

@@ -16,11 +16,11 @@
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [org.clojure/core.memoize "0.7.2"]
                  [joda-time/joda-time "2.10.3"]
-                 [org.slf4j/slf4j-api "1.7.26"]
+                 [org.slf4j/slf4j-api "1.7.28"]
                  [com.atlassian.fugue/fugue "2.7.0"]
                  [com.atlassian.jira/jira-rest-java-client-core "5.0.4" :upgrade false]
                  [com.atlassian.jira/jira-rest-java-client-api "5.0.4" :upgrade false]
-                 [clj-time "0.15.1"]
+                 [clj-time "0.15.2"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}

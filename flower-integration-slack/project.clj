@@ -15,7 +15,7 @@
                  [org.clojure/core.async "0.4.500"]
                  [org.clojure/data.json "0.2.6"]
                  [org.julienxx/clj-slack "0.6.3"]
-                 [stylefruits/gniazdo "1.1.1"]
+                 [stylefruits/gniazdo "1.1.2"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}

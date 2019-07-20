@@ -15,7 +15,7 @@
                  [org.clojure/data.json "0.2.6"]
                  [joda-time/joda-time "2.10.3"]
                  [clj-http "3.10.0"]
-                 [clj-time "0.15.1"]
+                 [clj-time "0.15.2"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}

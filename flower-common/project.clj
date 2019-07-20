@@ -11,6 +11,7 @@
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
             "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
+  :eastwood {:exclude-linters [:suspicious-expression]}
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [org.clojure/core.memoize "0.7.2"]
                  [com.cemerick/pomegranate "1.1.0"]

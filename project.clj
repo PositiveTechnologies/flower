@@ -38,4 +38,4 @@
         "lein-template"]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
-             :dev {:dependencies [[org.clojure/tools.namespace "0.3.0"]]}})
+             :dev {:dependencies [[org.clojure/tools.namespace "0.3.1"]]}})
