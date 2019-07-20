@@ -3,10 +3,13 @@
   :url "http://github.com/PositiveTechnologies/flower"
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
-  :plugins [[lein-sub "0.3.0"]
-            [lein-ancient "0.6.15"]
+  :plugins [[org.clojure/core.unify "0.5.7"]
+            [jonase/eastwood "0.3.11"]
+            [lein-sub "0.3.0"]
+            [lein-ancient "0.6.15" :exclusions [[rewrite-clj]]]
             [lein-bump-version "0.1.6"]]
   :dependencies [[org.clojure/clojure "1.10.1"]
+                 [org.clojure/core.unify "0.5.7"]
                  [flower/flower-tracker "0.4.7-SNAPSHOT"]
                  [flower/flower-repository "0.4.7-SNAPSHOT"]
                  [flower/flower-messaging "0.4.7-SNAPSHOT"]
@@ -38,4 +41,5 @@
         "lein-template"]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
-             :dev {:dependencies [[org.clojure/tools.namespace "0.3.1"]]}})
+             :dev {:dependencies [[org.clojure/tools.namespace "1.0.0"]]}})
+

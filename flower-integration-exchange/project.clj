@@ -4,7 +4,8 @@
   :scm {:dir ".."}
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
-  :plugins [[jonase/eastwood "0.3.5"]
+  :plugins [[org.clojure/core.unify "0.5.7"]
+            [jonase/eastwood "0.3.11"]
             [lein-cljfmt "0.5.7"]
             [lein-bump-version "0.1.6"]]
   :cljfmt {:remove-consecutive-blank-lines? false}
@@ -15,7 +16,7 @@
   :repositories {"atlassian-public" "https://maven.atlassian.com/content/repositories/atlassian-public/"
                  "sonatype" "https://oss.sonatype.org/content/repositories/releases"}
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
-                 [org.clojure/core.async "0.4.500"]
+                 [org.clojure/core.async "1.3.610"]
                  [com.microsoft.ews-java-api/ews-java-api "2.0"]
                  [flower/flower-common "0.4.7-SNAPSHOT"]
                  [flower/flower-proto "0.4.7-SNAPSHOT"]]
