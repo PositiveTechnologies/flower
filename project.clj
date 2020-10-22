@@ -1,4 +1,4 @@
-(defproject flower "0.4.7-SNAPSHOT"
+(defproject flower "0.4.7"
   :description "Flower is a library for integration with task trackers, repositories, messaging systems and more"
   :url "http://github.com/PositiveTechnologies/flower"
   :license {:name "MIT License"
@@ -10,16 +10,16 @@
             [lein-bump-version "0.1.6"]]
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/core.unify "0.5.7"]
-                 [flower/flower-tracker "0.4.7-SNAPSHOT"]
-                 [flower/flower-repository "0.4.7-SNAPSHOT"]
-                 [flower/flower-messaging "0.4.7-SNAPSHOT"]
-                 [flower/flower-team "0.4.7-SNAPSHOT"]
-                 [flower/flower-utilities "0.4.7-SNAPSHOT"]
-                 [flower/flower-integration-default "0.4.7-SNAPSHOT"]
-                 [flower/flower-integration-github "0.4.7-SNAPSHOT"]
-                 [flower/flower-integration-gitlab "0.4.7-SNAPSHOT"]
-                 [flower/flower-integration-jira "0.4.7-SNAPSHOT"]
-                 [flower/flower-integration-tfs "0.4.7-SNAPSHOT"]]
+                 [flower/flower-tracker "0.4.7"]
+                 [flower/flower-repository "0.4.7"]
+                 [flower/flower-messaging "0.4.7"]
+                 [flower/flower-team "0.4.7"]
+                 [flower/flower-utilities "0.4.7"]
+                 [flower/flower-integration-default "0.4.7"]
+                 [flower/flower-integration-github "0.4.7"]
+                 [flower/flower-integration-gitlab "0.4.7"]
+                 [flower/flower-integration-jira "0.4.7"]
+                 [flower/flower-integration-tfs "0.4.7"]]
   :aliases {"test" ["do" ["ancient-all"] ["sub" "lint-and-test-all"]]
             "bump-all" ["do" ["bump-version"] ["sub" "bump-version"]]
             "ancient-all" ["do" ["ancient"] ["sub" "ancient"]]
@@ -40,6 +40,5 @@
         "flower-utilities"
         "lein-template"]
   :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
-             :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
              :dev {:dependencies [[org.clojure/tools.namespace "1.0.0"]]}})
 

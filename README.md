@@ -32,7 +32,7 @@ If you need separate Python libraries with similar functionality, you may visit
 
 To install, add the following to your project `:dependencies`:
 
-    [flower "0.4.6"]
+    [flower "0.4.7"]
 
 Or use the [Leiningen](https://leiningen.org/) template to build a new application from scratch:
 
@@ -115,7 +115,7 @@ Check out `Flower` recipes in the [Cookbook](https://github.com/PositiveTechnolo
 
 ## License
 
-Copyright © 2017-2019 JSC Positive Technologies. All rights reserved.
+Copyright © 2017-2020 JSC Positive Technologies. All rights reserved.
 
 Distributed under the MIT License. See LICENSE.
 

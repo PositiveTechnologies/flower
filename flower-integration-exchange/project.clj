@@ -1,4 +1,4 @@
-(defproject flower/flower-integration-exchange "0.4.7-SNAPSHOT"
+(defproject flower/flower-integration-exchange "0.4.7"
   :description "Flower integration with Microsoft Exchange"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -11,14 +11,13 @@
   :cljfmt {:remove-consecutive-blank-lines? false}
   :eastwood {:exclude-namespaces [flower.messaging.exchange.async]}
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
-            "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
+            "test-all" ["with-profile" "default:+1.9" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :repositories {"atlassian-public" "https://maven.atlassian.com/content/repositories/atlassian-public/"
                  "sonatype" "https://oss.sonatype.org/content/repositories/releases"}
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [org.clojure/core.async "1.3.610"]
                  [com.microsoft.ews-java-api/ews-java-api "2.0"]
-                 [flower/flower-common "0.4.7-SNAPSHOT"]
-                 [flower/flower-proto "0.4.7-SNAPSHOT"]]
-  :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
-             :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})
+                 [flower/flower-common "0.4.7"]
+                 [flower/flower-proto "0.4.7"]]
+  :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}})

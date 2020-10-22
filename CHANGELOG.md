@@ -1,3 +1,9 @@
+# 0.4.7 - 2020-10-22
+
+- Fixed Atlassian public repo url
+- Upgraded dependencies
+- Dropped Clojure 1.8 support
+
 # 0.4.6 - 2019-02-15
 
 - Disabled implicit cache for Emacs by default.

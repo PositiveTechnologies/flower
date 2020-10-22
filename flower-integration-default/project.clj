@@ -1,4 +1,4 @@
-(defproject flower/flower-integration-default "0.4.7-SNAPSHOT"
+(defproject flower/flower-integration-default "0.4.7"
   :description "Flower mock integration"
   :url "http://github.com/PositiveTechnologies/flower"
   :scm {:dir ".."}
@@ -10,11 +10,10 @@
             [lein-bump-version "0.1.6"]]
   :cljfmt {:remove-consecutive-blank-lines? false}
   :aliases {"lint" ["do" ["cljfmt" "check"] ["eastwood"]]
-            "test-all" ["with-profile" "default:+1.9:+1.8" "test"]
+            "test-all" ["with-profile" "default:+1.9" "test"]
             "lint-and-test-all" ["do" ["lint"] ["test-all"]]}
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [org.clojure/core.async "1.3.610"]
-                 [flower/flower-common "0.4.7-SNAPSHOT"]
-                 [flower/flower-proto "0.4.7-SNAPSHOT"]]
-  :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
-             :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})
+                 [flower/flower-common "0.4.7"]
+                 [flower/flower-proto "0.4.7"]]
+  :profiles {:1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}})
